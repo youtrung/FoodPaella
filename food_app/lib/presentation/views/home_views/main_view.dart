@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:food_app/bloc/login_bloc.dart';
 import 'package:food_app/bloc/shopping_cart_bloc.dart';
 import 'package:food_app/constant/my_icon.dart';
 import 'package:food_app/constant/route_strings.dart';
@@ -8,14 +9,14 @@ import 'package:food_app/models/customer_model.dart';
 import 'package:food_app/presentation/views/home_views/home_section.dart';
 import 'package:food_app/presentation/views/home_views/my_account_section.dart';
 import 'package:food_app/presentation/views/home_views/order_section.dart';
+import 'package:food_app/presentation/views/notification_views/notification_section.dart';
 
 import 'favorite_section.dart';
 
 
 
 class HomeView extends StatefulWidget {
-  CustomerModel? customerModel;
-  HomeView({Key? key,this.customerModel}) : super(key: key);
+  HomeView({Key? key}) : super(key: key);
 
   @override
   _HomeViewState createState() => _HomeViewState();
@@ -23,7 +24,7 @@ class HomeView extends StatefulWidget {
 }
 
 class _HomeViewState extends State<HomeView> {
-CustomerModel? customer ;
+
 
 
 int _currentIndex=0;
@@ -31,18 +32,17 @@ int _currentIndex=0;
   void initState() {
     // TODO: implement initState
     super.initState();
-    customer=widget.customerModel;
   }
 
 
   @override
   Widget build(BuildContext context) {
     final screens=[
-      HomeSection(customerModel:widget.customerModel,),
-      OrderSection(customerModel: widget.customerModel,),
-      FavoriteSection(customerModel:widget.customerModel,),
-      Container(),
-      MyAccountSection(customerModel:widget.customerModel,)
+      HomeSection(),
+      OrderSection(),
+      FavoriteSection(),
+      NotificationSection(),
+      MyAccountSection()
     ];
     final titleScreens=[
       Text("Home Page"),
@@ -76,7 +76,7 @@ int _currentIndex=0;
               alignment: Alignment.centerRight,
               child: IconButton(
                   onPressed: () {
-                    Navigator.pushNamed(context,CART_ROUTE,arguments: widget.customerModel);
+                    Navigator.pushNamed(context,CART_ROUTE);
                   },
                   icon: Icon(CupertinoIcons.shopping_cart)),
             ),

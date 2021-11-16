@@ -1,8 +1,8 @@
-import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:food_app/bloc/search_bloc.dart';
 import 'package:food_app/bloc/store_bloc.dart';
 import 'package:food_app/constant/colors.dart';
 import 'package:food_app/constant/widgets.dart';
@@ -15,8 +15,7 @@ import 'package:food_app/utils/helper.dart';
 import 'store_item.dart';
 
 class TabHomeView extends StatefulWidget {
-  CustomerModel? customerModel;
-  TabHomeView({Key? key,this.customerModel}) : super(key: key);
+  TabHomeView({Key? key}) : super(key: key);
 
   @override
   _TabHomeViewState createState() => _TabHomeViewState();
@@ -28,15 +27,14 @@ class _TabHomeViewState extends State<TabHomeView> with SingleTickerProviderStat
   final listCategory=[
     CategoryItem(title: "Healthy", fileName: "diet.png"),
     CategoryItem(title: "Drinks", fileName: "drink.png"),
-    CategoryItem(title: "Fast Foods", fileName: "food-truck.png"),
+    CategoryItem(title: "Fast food", fileName: "food-truck.png"),
     CategoryItem(title: "Noddles", fileName: "noddles.png"),
-    CategoryItem(title: "Rice", fileName: "rice.png"),
+    CategoryItem(title: "Cơm", fileName: "rice.png"),
     CategoryItem(title: "Snacks", fileName: "snack.png"),
     CategoryItem(title: "Traditional", fileName: "traditional-food.png"),
   ];
 
   List<Store> listStore=[];
-
 
   @override
   void initState() {
@@ -78,7 +76,7 @@ class _TabHomeViewState extends State<TabHomeView> with SingleTickerProviderStat
                         ),
                         icon:Icon(Icons.search,color: Colors.black,),
                         onPressed: () {
-                          showSearch(context: context, delegate: DataSearch(listStore: state.stores,customerModel: widget.customerModel));
+                          showSearch(context: context, delegate: DataSearch(storeBloc:BlocProvider.of<SearchBloc>(context)));
                         },
                         label: Text("Search for food",style: TextStyle(color: Colors.black,fontSize: 20),),
                       ),
@@ -157,37 +155,43 @@ class _TabHomeViewState extends State<TabHomeView> with SingleTickerProviderStat
             TabBarView(
               controller: _tabController,
               children: [
+                state is SuccessStore ?
+                state.stores!.length >0 ?
                 ListView.builder(
                       padding: EdgeInsets.only(top: 30),
-                     itemCount: state.stores!.length,
+                     itemCount:state.stores!.length,
                      itemBuilder: (BuildContext context, int index) {
                        if(state is StoreState) {
                          if(state.stores != null) {
                            listStore=state.stores!;
                            listStore.sort((a,b)=>b.reviews!.length.compareTo(a.reviews!.length));
-                           return buildStoreItem(store:state.stores![index],customerModel:widget.customerModel,);
+                           return buildStoreItem(store:state.stores![index],);
                          }else
                            return CircularLoading();
                        }else
                          return CircularLoading();
                      },
-                   ),
+                   ) : CircularLoading() : CircularLoading() ,
+                state is SuccessStore ?
+                state.stores!.length >0 ?
                 ListView.builder(
                   padding: EdgeInsets.only(top: 30),
-                  itemCount: state.stores!.length,
+                  itemCount:state.stores!=null ? state.stores!.length:0,
                   itemBuilder: (BuildContext context, int index) {
                     if(state is StoreState) {
                       if(state.stores != null) {
-                        return buildStoreItem(store: state.stores!.reversed.toList()[index],customerModel:widget.customerModel,);
+                        return buildStoreItem(store: state.stores!.reversed.toList()[index],);
                       }else
                         return CircularLoading();
                     }else
                       return CircularLoading();
                   },
-                ),
+                )  : CircularLoading() : CircularLoading(),
+                state is SuccessStore ?
+                state.stores!.length >0 ?
                 ListView.builder(
                   padding: EdgeInsets.only(top: 30),
-                  itemCount: state.stores!.length,
+                  itemCount: state.stores!=null ? state.stores!.length:0,
                   itemBuilder: (BuildContext context, int index) {
                     if(state is StoreState) {
                       if(state.stores != null) {
@@ -205,13 +209,13 @@ class _TabHomeViewState extends State<TabHomeView> with SingleTickerProviderStat
                           var rb=tb/b.reviews!.length;
                           return rb.compareTo(ra);
                         });
-                        return buildStoreItem(store:state.stores![index],customerModel:widget.customerModel,);
+                        return buildStoreItem(store:state.stores![index],);
                       }else
                         return CircularLoading();
                     }else
                       return CircularLoading();
                   },
-                ),
+                ): CircularLoading() : CircularLoading(),
                 Center(
                   child: Text(
                     'MILCHPPODUKE',

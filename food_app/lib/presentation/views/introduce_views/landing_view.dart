@@ -1,6 +1,8 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:food_app/bloc/login_bloc.dart';
 import 'package:food_app/constant/colors.dart';
 import 'package:food_app/constant/route_strings.dart';
 import 'package:food_app/utils/helper.dart';
@@ -62,7 +64,8 @@ class LandingView extends StatelessWidget {
                         width: double.infinity,
                         height: 50,
                         child: ElevatedButton(
-                          onPressed: () { 
+                          onPressed: () {
+                            BlocProvider.of<LoginBloc>(context).add(Authentication());
                             Navigator.pushNamed(context,LOGIN_ROUTE);
                           },
                           child:Text("LOGIN",textAlign: TextAlign.center,) ,

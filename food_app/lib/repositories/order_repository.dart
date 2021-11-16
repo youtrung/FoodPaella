@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:math';
 
 import 'package:food_app/constant/route_strings.dart';
 import 'package:food_app/models/order_model.dart';
@@ -30,6 +31,22 @@ class OrderRepository {
   static APIService<List<OrderModel>> getOrderById(String userId) {
     return APIService(
         url: Uri.http(baseAPI,"api/customer/getOrders/$userId"),
+        parse: (response) {
+          var data=parseListResponses(response.body);
+          return  data;
+        }
+    );
+  }
+
+  static APIService<List<OrderModel>> postOrderDayToDay(String? userId,DateTime? startDate,DateTime? endDate) {
+    Map data = {
+      "customer_id":userId,
+      "startDay":startDate!.toIso8601String(),
+      "endDay":endDate!.toIso8601String()
+    };
+    return APIService(
+        url: Uri.http(baseAPI,"api/customer/filterOrdersDayToDay"),
+        body:data,
         parse: (response) {
           var data=parseListResponses(response.body);
           return  data;

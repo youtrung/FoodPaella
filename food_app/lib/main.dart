@@ -1,29 +1,44 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:food_app/bloc/search_bloc.dart';
 import 'package:food_app/bloc/shopping_cart_bloc.dart';
 import 'package:food_app/bloc/user_bloc.dart';
 import 'package:food_app/constant/colors.dart';
 import 'package:food_app/presentation/router.dart';
 import 'package:food_app/presentation/views/introduce_views/splash_view.dart';
+import 'bloc/filter_category_bloc.dart';
 import 'bloc/food_bloc.dart';
+import 'bloc/login_bloc.dart';
 import 'bloc/store_bloc.dart';
 
-void main() {
+void main() async{
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
   runApp(
       MultiBlocProvider(
         providers: [
+          BlocProvider<LoginBloc>(
+          create:   (context)=>LoginBloc()
+          ),
           BlocProvider<CartBloc>(
           create: (context)=>CartBloc(),
           ),
           BlocProvider<StoreBloc>(
-            create: (context)=>StoreBloc()..add(getStoresEvent()),
+            create: (context)=>StoreBloc()..add(GetStoresEvent()),
           ),
           BlocProvider<FoodBloc>(
             create: (context)=>FoodBloc()..add(getFoodEvent()),
           ),
         BlocProvider<UserBloc>(
         create: (context)=>UserBloc(),
-        )
+        ),
+          BlocProvider<FilterBloc>(
+            create: (context)=>FilterBloc(),
+          ),
+          BlocProvider<SearchBloc>(
+            create: (context)=>SearchBloc(),
+          ),
         ],
         child: MyApp(
     router:AppRouter()
@@ -41,6 +56,10 @@ class MyApp extends StatelessWidget {
       title: 'Flutter Demo',
       theme: ThemeData(
         fontFamily: "Roboto",
+        primaryColor: AppColor.yellow,
+        appBarTheme: AppBarTheme(
+          backgroundColor: Color(0xFFF1BA27),
+        ),
         elevatedButtonTheme:
         ElevatedButtonThemeData(
             style:

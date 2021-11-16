@@ -5,16 +5,12 @@ import 'package:food_app/bloc/favorite_list_bloc.dart';
 import 'package:food_app/constant/colors.dart';
 import 'package:food_app/constant/rating_bar_widget.dart';
 import 'package:food_app/constant/route_strings.dart';
-import 'package:food_app/models/customer_model.dart';
-import 'package:food_app/models/like_arguments.dart';
 import 'package:food_app/models/store_model.dart';
-import 'package:food_app/utils/helper.dart';
 import 'dart:ui' as ui;
 
 class buildStoreItem extends StatefulWidget {
   Store store;
-  CustomerModel? customerModel;
-  buildStoreItem({Key? key,required this.store,this.customerModel}): super(key: key);
+  buildStoreItem({Key? key,required this.store}): super(key: key);
 
   @override
   State<buildStoreItem> createState() => _buildStoreItemState();
@@ -37,9 +33,14 @@ class _buildStoreItemState extends State<buildStoreItem> {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () {
-        LikeArguments likeArguments=LikeArguments(store: widget.store,customerModel: widget.customerModel);
-          Navigator.pushNamed(context, STORE_ROUTE,arguments: likeArguments).then((_) {
-            BlocProvider.of<FavoriteBloc>(context).add(GetFavoriteStores());
+        // LikeArguments likeArguments=LikeArguments(store: widget.store,customerModel: widget.customerModel);
+          Navigator.pushNamed(context, STORE_ROUTE,arguments:widget.store).then((_) {
+            try {
+              BlocProvider.of<FavoriteBloc>(context).add(GetFavoriteStores());
+              // neu tu trang store-> main se bao loi no blocProvider
+            } catch(e) {
+
+            }
           }
           );
       },
@@ -87,13 +88,12 @@ class _buildStoreItemState extends State<buildStoreItem> {
                       mainAxisSize: MainAxisSize.min,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          "${widget.store.name}",
-                          style: TextStyle(color: Colors.white,fontWeight: FontWeight.w700),
-                        ),
-                        Text(
-                          "Some description",
-                          style: TextStyle(color: Colors.white),
+                        Padding(
+                          padding: const EdgeInsets.only(left: 24.0),
+                          child: Text(
+                            "${widget.store.name}",
+                            style: TextStyle(color: Colors.white,fontWeight: FontWeight.w700),
+                          ),
                         ),
                         SizedBox(height: 16,),
                         Row(
@@ -103,7 +103,10 @@ class _buildStoreItemState extends State<buildStoreItem> {
                               SizedBox(width: 8,),
                               Flexible(
                                 child: Text(
-                                  "Some location",
+                                  "${widget.store.contact!.address!.street},"
+                                      "${widget.store.contact!.address!.ward},"
+                                      "${widget.store.contact!.address!.district},"
+                                      "${widget.store.contact!.address!.city}",
                                   style: TextStyle(color: Colors.white),
                                 ),
                               ),

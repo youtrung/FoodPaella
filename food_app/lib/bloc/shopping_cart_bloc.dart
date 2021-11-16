@@ -62,7 +62,6 @@ class CartBloc extends Bloc<CartEvent,CartState> {
           orderModel.foods=[];
           orderModel.customerId=user!.id;
           orderModel.storeId=event.storeId;
-          orderModel.date=DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day);
           orderModel.foods!.add(event.food);
           cartOrder.add(orderModel);
         }

@@ -10,8 +10,7 @@ import 'package:food_app/models/food_model.dart';
 import 'card_item_widget.dart';
 
 class ShoppingCart extends StatefulWidget {
-  CustomerModel? customerModel;
-  ShoppingCart({this.customerModel});
+  ShoppingCart();
   @override
   _ShoppingCartState createState() => _ShoppingCartState();
 }
@@ -38,7 +37,7 @@ class _ShoppingCartState extends State<ShoppingCart> {
                   : Container()
             ],
           ),
-              body: CardItemWidgets(customerModel: widget.customerModel,)
+              body: CardItemWidgets()
         )
     );
   }

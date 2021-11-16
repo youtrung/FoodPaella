@@ -8,9 +8,11 @@ class Store {
   String? image;
   List<Review>? reviews;
   Contact? contact;
+  DateTime? createdAt;
+  DateTime? updatedAt;
 
   Store({this.id,this.name,
-    this.image,this.contact,this.foods,this.reviews,this.status
+    this.image,this.contact,this.foods,this.reviews,this.status,this.createdAt,this.updatedAt
   }
   );
   factory Store.initial() {
@@ -27,7 +29,9 @@ class Store {
         status: jsonMap["status"],
         contact: Contact.fromJSON(jsonMap["contact"]),
         foods: foods,
-        reviews: reviews
+        reviews: reviews,
+        createdAt:DateTime.parse(jsonMap["createdAt"]),
+        updatedAt:DateTime.parse(jsonMap["updatedAt"])
     );
     return data;
   }
@@ -40,7 +44,6 @@ class Store {
     "Foods": List<String>.from(foods!.map((x) => x)),
     "image": image,
     "reviews": List<Review>.from(reviews!.map((x) => x.toJson())),
-
   };
 
 }
@@ -93,10 +96,11 @@ class Address {
   String? street;
   String? city;
   String? district;
+  String? ward;
   List<Activity>? activity;
 
   Address({
-    this.street,this.city,this.district,this.activity
+    this.street,this.city,this.district,this.activity,this.ward
 });
   factory Address.fromJSON(Map<String,dynamic> jsonMap) {
     var times=jsonMap["activity"] as List;
@@ -107,6 +111,7 @@ class Address {
       district: jsonMap["district"],
       street:jsonMap["street"],
       city: jsonMap["city"],
+      ward:jsonMap["ward"],
       activity:listActivity
     );
     return data;
@@ -115,16 +120,16 @@ class Address {
 }
 class Activity{
   String? day;
-  DateTime? open;
-  DateTime? close;
+  String? open;
+  String? close;
   Activity({
     this.day,this.open,this.close
 });
   factory Activity.fromJSON(Map<String,dynamic> jsonMap) {
     final data=Activity(
       day: jsonMap["day"],
-      open: DateTime.parse(jsonMap["open"]),
-      close: DateTime.parse(jsonMap["close"]),
+      open: jsonMap["open"],
+      close: jsonMap["close"],
     );
     return data;
   }

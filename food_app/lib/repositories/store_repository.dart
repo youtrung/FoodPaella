@@ -32,5 +32,26 @@ class StoreRepository {
     );
   }
 
+  static APIService<List<Store>> getStoresByCategory(String? category) {
+    return APIService(
+        url: Uri.http(baseAPI,"/api/customer/searchByCategory/$category"),
+        parse: (response) {
+          final stores = parseResponses(response.body);
+          return stores;
+        }
+    );
+  }
+
+  static APIService<List<Store>> getStoresByFoodName(String? text) {
+    return APIService(
+        url: Uri.http(baseAPI,"/api/customer/searchFood/$text"),
+        parse: (response) {
+          final stores = parseResponses(response.body);
+          return stores;
+        }
+    );
+  }
+
+
 
 }

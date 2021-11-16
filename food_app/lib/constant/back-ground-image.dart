@@ -10,7 +10,8 @@ class BackgroundImage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ShaderMask(
+    return
+      ShaderMask(
       shaderCallback: (rect) => LinearGradient(
         begin: Alignment.bottomCenter,
         end: Alignment.center,
@@ -20,8 +21,8 @@ class BackgroundImage extends StatelessWidget {
       child: Container(
         decoration: BoxDecoration(
           image: DecorationImage(
-            image: AssetImage(image),
-            fit: BoxFit.cover,
+            image: NetworkImage(image),
+            fit: BoxFit.fill,
             colorFilter: ColorFilter.mode(Colors.black54, BlendMode.softLight),
           ),
         ),

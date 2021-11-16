@@ -85,7 +85,7 @@ class RegisterBloc extends Bloc<RegisterEvent,RegisterState> {
         final data =await APIWeb().post(CustomerRepository.createCustomerWithEmailAndPassword(event.customerModel));
         final token =await APIWeb().post(CustomerRepository.saveToken(event.customerModel));
         SharedPreferences pref=await SharedPreferences.getInstance();
-        await pref.setString("token",token);
+        await pref.setString("token",token!);
         await pref.setString("user",jsonEncode(data));
         emit(state.copyWith(formStatus: SubmissionSuccess(customerModel: data)));
       }catch(e) {

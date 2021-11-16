@@ -30,7 +30,23 @@ class _RegisterViewState extends State<RegisterView> {
     Size size = MediaQuery.of(context).size;
     return Stack(
       children: [
-        BackgroundImage(image: Helper.getAssetName(fileName: "login_screen_bg.png")),
+        ShaderMask(
+          shaderCallback: (rect) => LinearGradient(
+            begin: Alignment.bottomCenter,
+            end: Alignment.center,
+            colors: [Colors.black, Colors.transparent],
+          ).createShader(rect),
+          blendMode: BlendMode.darken,
+          child: Container(
+            decoration: BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage(Helper.getAssetName(fileName: "login_screen_bg.png")),
+                fit: BoxFit.fill,
+                colorFilter: ColorFilter.mode(Colors.black54, BlendMode.softLight),
+              ),
+            ),
+          ),
+        ),
         Scaffold(
           backgroundColor: Colors.transparent,
           extendBodyBehindAppBar: true,

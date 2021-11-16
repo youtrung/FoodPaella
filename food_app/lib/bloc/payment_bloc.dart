@@ -36,6 +36,13 @@ class GetPaymentEvent extends OrderEvent {
   GetPaymentEvent({this.userId});
 }
 
+class GetPaymentDayToDay extends OrderEvent {
+  String? userId;
+  DateTime? startDate;
+  DateTime? endDate;
+  GetPaymentDayToDay({this.userId,this.startDate,this.endDate});
+}
+
 
 
 class PaymentBloc extends Bloc<OrderEvent,PaymentState> {
@@ -62,7 +69,20 @@ class PaymentBloc extends Bloc<OrderEvent,PaymentState> {
       }catch(e) {
           emit(PaymentFailedState(error: e.toString()));
       }
-    } );
+    });
+
+    on<GetPaymentDayToDay> ( (event,emit) async {
+      try {
+        emit(PaymentLoadingState());
+        final data=await APIWeb().post(OrderRepository.postOrderDayToDay(event.userId,event.startDate,event.endDate));
+        orders=data!;
+        final foods=await APIWeb().get(FoodRepository.load());
+        foodList=foods;
+        emit(PaymentState(orders: data));
+      }catch(e) {
+        emit(PaymentFailedState(error: e.toString()));
+      }
+    });
 
   }
 

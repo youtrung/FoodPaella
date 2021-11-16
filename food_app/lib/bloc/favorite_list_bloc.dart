@@ -44,7 +44,7 @@ class FavoriteBloc extends Bloc<FavoriteEvent,FavoriteState> {
     on<GetFavoriteStores>((event,emit) async {
       try {
         final data =await APIWeb().post(StoreRepository.getFavoriteStores(customerModel));
-        myListStore=data;
+        myListStore=data!;
         emit(FavoriteState(myStores: myListStore));
       } catch (e) {
         emit(FailState(error: e as Error));

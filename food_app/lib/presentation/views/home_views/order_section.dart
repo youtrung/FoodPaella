@@ -1,16 +1,17 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:food_app/bloc/login_bloc.dart';
 import 'package:food_app/bloc/payment_bloc.dart';
 import 'package:food_app/bloc/shopping_cart_bloc.dart';
 import 'package:food_app/constant/colors.dart';
 import 'package:food_app/models/customer_model.dart';
 import 'package:food_app/presentation/views/shopping_cart_views/card_item_widget.dart';
+import 'package:food_app/presentation/views/shopping_cart_views/history_order_view.dart';
 import 'package:food_app/presentation/views/shopping_cart_views/ongoing_order_view.dart';
 
 class OrderSection extends StatefulWidget {
-  CustomerModel? customerModel;
-   OrderSection({Key? key,this.customerModel}) : super(key: key);
+   OrderSection({Key? key}) : super(key: key);
 
   @override
   _OrderSectionState createState() => _OrderSectionState();
@@ -28,6 +29,7 @@ class _OrderSectionState extends State<OrderSection> with SingleTickerProviderSt
 
   @override
   Widget build(BuildContext context) {
+    CustomerModel? customer=BlocProvider.of<LoginBloc>(context).customerModel;
     return Scaffold(
       appBar: AppBar(
         elevation: 0,
@@ -61,18 +63,16 @@ class _OrderSectionState extends State<OrderSection> with SingleTickerProviderSt
           controller: _tabController,
           children: [
             BlocProvider<PaymentBloc>(
-              create: (_)=>PaymentBloc()..add(GetPaymentEvent(userId: widget.customerModel!.id ?? "")),
+              create: (_)=>PaymentBloc()..add(GetPaymentEvent(userId: customer!.id ?? "")),
                 child: OngoingOrderView()
             ),
-            Center(
-              child: Text(
-                'HISTORY',
-                style: TextStyle(fontSize: 30, fontWeight: FontWeight.w600),
-              ),
+                BlocProvider<PaymentBloc>(
+            create: (_)=>PaymentBloc(),
+            child: HistoryView()
             ),
             BlocBuilder<CartBloc, CartState>(
               builder: (context,state)
-                => CardItemWidgets(customerModel: widget.customerModel,)
+                => CardItemWidgets()
             ),
           ],
 

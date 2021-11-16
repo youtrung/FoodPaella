@@ -1,5 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:food_app/bloc/filter_category_bloc.dart';
+import 'package:food_app/bloc/store_bloc.dart';
+import 'package:food_app/constant/route_strings.dart';
 
 import 'package:food_app/utils/helper.dart';
 
@@ -12,6 +16,10 @@ class CategoryItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       child: InkWell(
+        onTap: () {
+          BlocProvider.of<FilterBloc>(context).add(FilterEvent(category:title));
+          Navigator.pushNamed(context,FILTER_ROUTE,arguments: title);
+        },
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,

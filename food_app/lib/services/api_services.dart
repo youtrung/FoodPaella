@@ -9,8 +9,8 @@ class APIService<T> {
   APIService({this.url, this.body, this.parse});
 }
 class APIWeb {
-  Future<T> get<T>(APIService<T> resource) async {
-    String parsedData=Uri.decodeFull(resource.url!.toString()).replaceAll(r'"', '');
+  Future<T> get<T>(APIService<T>? resource) async {
+    String parsedData=Uri.decodeFull(resource!.url!.toString()).replaceAll(r'"', '');
     final response = await http.get(Uri.parse(parsedData));
     if(response.statusCode == 200) {
       return resource.parse!(response);
@@ -18,17 +18,14 @@ class APIWeb {
       throw Exception(response.statusCode);
     }
   }
-  Future<T> post<T>(APIService<T> resource) async {
+  Future<T?> post<T>(APIService<T?> resource) async {
     Map<String, String>  headers = {
       "Content-Type": "application/json",
     };
-    print(resource.body.toString());
     final response = await http.post(resource.url!, body: jsonEncode(resource.body), headers: headers);
-    print(resource.body);
     if(response.statusCode == 200) {
       return resource.parse!(response);
     } else {
-      print("ok");
       throw Exception(response.statusCode);
     }
   }

@@ -8,5 +8,6 @@ const CART_ROUTE="/shopping_cart_view";
 const PROFILE_ROUTE="/profile_view";
 const ADDRESS_ROUTE="/address_view";
 const BILL_ROUTE="/bill_view";
+const FILTER_ROUTE="filter_view";
 
 const baseAPI="api-order-food.herokuapp.com";

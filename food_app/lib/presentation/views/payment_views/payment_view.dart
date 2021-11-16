@@ -4,6 +4,7 @@ import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:food_app/bloc/login_bloc.dart';
 import 'package:food_app/bloc/payment_bloc.dart';
 import 'package:food_app/bloc/shopping_cart_bloc.dart';
 import 'package:food_app/constant/circular_loading.dart';
@@ -16,8 +17,7 @@ import 'package:intl/intl.dart';
 
 
 class PaymentView extends StatefulWidget {
-  CustomerModel customerModel;
-   PaymentView({Key? key,required this.customerModel}) : super(key: key);
+   PaymentView({Key? key}) : super(key: key);
 
   @override
   State<PaymentView> createState() => _PaymentViewState();
@@ -38,6 +38,7 @@ class _PaymentViewState extends State<PaymentView> {
     final _formKey=GlobalKey<FormState>();
     final formatCurrency = new NumberFormat();
     var cartOrder=BlocProvider.of<CartBloc>(context).cartOrder;
+    CustomerModel? customer=BlocProvider.of<LoginBloc>(context).customerModel;
     List<Food> foodList=[];
     cartOrder.forEach((element) { element.foods!.forEach((f) { foodList.add(f); }); });
     double sumPriceAllOrder() {
@@ -53,8 +54,8 @@ class _PaymentViewState extends State<PaymentView> {
       child: BlocConsumer<PaymentBloc,PaymentState>(
         listener: (context,payState) {
               if (payState is PaymentSuccessState) {
-                // Navigator.of(context).maybePop();
-                // BlocProvider.of<CartBloc>(context).add(ClearCart());
+
+
               }
               if(payState is PaymentFailedState) {
                 print(payState.error);
@@ -75,7 +76,7 @@ class _PaymentViewState extends State<PaymentView> {
                         child: ElevatedButton(
                           onPressed: () {
                             if (_formKey.currentState!.validate()) {
-                              print(widget.customerModel.address!.street);
+                              print(customer!.address!.street);
                               cartOrder.forEach((element) {
                                 double t =0;
                                 element.foods!.forEach((f) { t+=(f.quantity* f.price!.toDouble()) ; });
@@ -91,7 +92,8 @@ class _PaymentViewState extends State<PaymentView> {
                                         desc:
                                         'You placed the order successfully.You will get your food within 26 minutes. Thanks for using our service.Enjoy your food :)',
                                         btnOkOnPress: () {
-                                        debugPrint('OnClcik');
+                                          Navigator.of(context).maybePop();
+                                          BlocProvider.of<CartBloc>(context).add(ClearCart());
                                         },
                                         btnOkIcon: Icons.check_circle,
                                         onDissmissCallback: (type) {
@@ -176,14 +178,14 @@ class _PaymentViewState extends State<PaymentView> {
                                   Row(
                                     children: [
                                       Expanded(child: Text("Name:",style: TextStyle(fontSize: 16),)),
-                                      Text("${widget.customerModel.name}",style: TextStyle(fontSize: 16))
+                                      Text("${customer!.name}",style: TextStyle(fontSize: 16))
                                     ],
                                   ),
                                   Divider(),
                                   Row(
                                     children: [
                                       Expanded(child: Text("Phone:",style: TextStyle(fontSize: 16),)),
-                                      Text("${widget.customerModel.phone}",style: TextStyle(fontSize: 16))
+                                      Text("${customer.phone}",style: TextStyle(fontSize: 16))
                                     ],
                                   ),
                                 ],
@@ -203,14 +205,14 @@ class _PaymentViewState extends State<PaymentView> {
                               Row(
                                 children: [
                                   Flexible(
-                                    child: Text("Đường ${widget.customerModel.address!.street},phường:${widget.customerModel.address!.ward},"
-                                        "quận: ${widget.customerModel.address!.district}, thành phố : ${widget.customerModel.address!.city} ",
+                                    child: Text("Đường ${customer.address!.street},phường:${customer.address!.ward},"
+                                        "quận: ${customer.address!.district}, thành phố : ${customer.address!.city} ",
                                       softWrap: true,
                                       style: TextStyle(fontSize: 16),
                                     ),
                                   ),
                                   OutlinedButton(onPressed: () {
-                                    Navigator.pushNamed(context,ADDRESS_ROUTE,arguments:widget.customerModel).then((_){
+                                    Navigator.pushNamed(context,ADDRESS_ROUTE,arguments:customer).then((_){
                                       setState(() {
 
                                       });

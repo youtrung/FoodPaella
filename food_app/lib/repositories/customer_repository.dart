@@ -7,9 +7,12 @@ import 'package:food_app/services/api_services.dart';
 
 class CustomerRepository {
 
-static CustomerModel parseResponses(String resp) {
-  final customer = CustomerModel.fromJSON(jsonDecode(resp));
-  return customer;
+static CustomerModel? parseResponses(String resp) {
+  if (resp!="null") {
+    final customer = CustomerModel.fromJSON(jsonDecode(resp));
+    return customer;
+  }else
+      return null;
 }
 
 static ResultModel parseResultResponses(String resp) {
@@ -17,8 +20,18 @@ static ResultModel parseResultResponses(String resp) {
   return result;
 }
 
+static APIService<CustomerModel?>? getCustomerById(String customerId) {
+  return APIService(
+      url: Uri.http(baseAPI,"/api/customers/$customerId"),
+      parse: (response) {
+        final customer = parseResponses(response.body);
+        return customer;
+      }
+  );
+}
 
-static APIService<CustomerModel> getCustomerByEmailAndPassword(CustomerModel? customerModel) {
+
+static APIService<CustomerModel?> getCustomerByEmailAndPassword(CustomerModel? customerModel) {
   return APIService(
       url: Uri.http(baseAPI,"/api/loginCustomer"),
       body: customerModel,
@@ -50,7 +63,7 @@ static APIService<String> getToken(String? token) {
 
 
 
-static APIService<CustomerModel> createCustomerWithEmailAndPassword(CustomerModel? customerModel) {
+static APIService<CustomerModel?> createCustomerWithEmailAndPassword(CustomerModel? customerModel) {
   return APIService(
     url: Uri.http(baseAPI,"/api/customers"),
     body: customerModel,

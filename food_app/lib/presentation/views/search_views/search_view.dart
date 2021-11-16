@@ -1,15 +1,16 @@
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:food_app/bloc/search_bloc.dart';
+import 'package:food_app/constant/circular_loading.dart';
 import 'package:food_app/constant/route_strings.dart';
-import 'package:food_app/models/customer_model.dart';
-import 'package:food_app/models/like_arguments.dart';
 import 'package:food_app/models/store_model.dart';
 
 
 class DataSearch extends SearchDelegate<Store> {
-  CustomerModel? customerModel;
-  List<Store>? listStore;
-  DataSearch({this.listStore,this.customerModel});
+  final Bloc<SearchEvent,SearchState> storeBloc;
+  DataSearch({required this.storeBloc});
   @override
   List<Widget>? buildActions(BuildContext context) {
     return [
@@ -32,37 +33,64 @@ class DataSearch extends SearchDelegate<Store> {
 
   @override
   Widget buildResults(BuildContext context) {
-    // TODO: implement buildResults
-    throw UnimplementedError();
+      storeBloc.add(SearchEvent(text: query));
+    return BlocBuilder<SearchBloc,SearchState>(
+      builder: (context,stateSearch) {
+        if (stateSearch is SearchLoadingState) {
+          return CircularLoading();
+        }else if (stateSearch is SearchSuccessState)
+        {
+          return ListView.builder(itemBuilder: (context,index)=>
+              ListTile(
+                onTap: () {
+                  // LikeArguments likeArguments=LikeArguments(store: suggestionList[index],customerModel: customer);
+                  Navigator.pushNamed(context, STORE_ROUTE,arguments:stateSearch.stores![index]);
+                },
+                title: Text(stateSearch.stores![index].name ?? ""),
+                leading: Icon(Icons.store),
+              ),
+            itemCount: stateSearch.stores!.length,
+          );
+        }else if (stateSearch is SearchFailedState) {
+          return Container(child: Text("not found"),);
+        }
+        return Container();
+      },
+    );
   }
 
   @override
   Widget buildSuggestions(BuildContext context) {
-    final suggestionList=query.isEmpty?<Store>[]:listStore!.where((element) => element.name!.startsWith(query[0].toUpperCase())).toList();
-    return ListView.builder(itemBuilder: (context,index)=>
-        ListTile(
-          onTap: () {
-            LikeArguments likeArguments=LikeArguments(store: suggestionList[index],customerModel: customerModel);
-            Navigator.pushNamed(context, STORE_ROUTE,arguments: likeArguments);
-          },
-            leading: Icon(Icons.store),
-            title: RichText(
-            text:TextSpan(
-              text:suggestionList[index].name!.substring(0,query.length),
-              style: TextStyle(
-                color: Colors.black,fontWeight: FontWeight.bold
-              ),
-              children: [
-                TextSpan(
-                  text: suggestionList[index].name!.substring(query.length),
-                  style: TextStyle(color:Colors.grey)
-                )
-              ]
-            ),
-        ),
-        ),
-        itemCount: suggestionList.length,
-    );
+    return Container();
+    // if (query.length >0) {
+    //   _debounce.run(() {
+    //     storeBloc.add(SearchEvent(text: query));
+    //   });
+    // }
+    // return BlocBuilder<SearchBloc,SearchState>(
+    //   builder: (context,stateSearch) {
+    //     if (stateSearch is SearchLoadingState) {
+    //       return Container();
+    //     }else if (stateSearch is SearchSuccessState)
+    //     {
+    //       return ListView.builder(itemBuilder: (context,index)=>
+    //           ListTile(
+    //             onTap: () {
+    //               // LikeArguments likeArguments=LikeArguments(store: suggestionList[index],customerModel: customer);
+    //               Navigator.pushNamed(context, STORE_ROUTE,arguments:stateSearch.stores![index]);
+    //             },
+    //             title: Text(stateSearch.stores![index].name ?? ""),
+    //             leading: Icon(Icons.store),
+    //           ),
+    //         itemCount: stateSearch.stores!.length,
+    //       );
+    //     }else if (stateSearch is SearchFailedState) {
+    //       return Container();
+    //     }
+    //     return Container();
+    //   },
+    // );
   }
 
 }
+

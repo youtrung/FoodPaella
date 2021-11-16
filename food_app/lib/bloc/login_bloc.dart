@@ -78,6 +78,7 @@ class Authentication extends LoginEvent {
 
 
 class LoginBloc extends Bloc<LoginEvent,LoginState> {
+  CustomerModel? customerModel=CustomerModel.initial();
   LoginBloc() : super(LoginState()) {
 
     on<EmailChanged> (
@@ -91,8 +92,9 @@ class LoginBloc extends Bloc<LoginEvent,LoginState> {
         final customer =await APIWeb().post(CustomerRepository.getCustomerByEmailAndPassword(event.customerModel));
         final token =await APIWeb().post(CustomerRepository.saveToken(event.customerModel));
         SharedPreferences pref=await SharedPreferences.getInstance();
-        await pref.setString("token",token);
+        await pref.setString("token",token!);
         await pref.setString("user",jsonEncode(customer));
+        customerModel=customer;
         emit(state.copyWith(formStatus: SubmissionSuccess(customerModel: customer)));
       }catch(e) {
         emit(state.copyWith(formStatus: SubmissionFailed(e.toString())));
@@ -101,14 +103,17 @@ class LoginBloc extends Bloc<LoginEvent,LoginState> {
     });
     on<Authentication> ( (event,emit)  async {
       try {
+        emit(state.copyWith(formStatus: FormSubmitting()));
         SharedPreferences pref=await SharedPreferences.getInstance();
         String? token=pref.getString("token")!;
         final result =await APIWeb().get(CustomerRepository.getToken(token));
         if (result.toString() == "true") {
           CustomerModel user=CustomerModel.fromJSON(jsonDecode(pref.get("user").toString()));
-          CustomerModel customer =await APIWeb().post(CustomerRepository.getCustomerByEmailAndPassword(user));
+          CustomerModel? customer =await APIWeb().post(CustomerRepository.getCustomerByEmailAndPassword(user));
+          customerModel=customer;
           emit(state.copyWith(formStatus: SubmissionSuccess(customerModel: customer)));
-        }
+        }else
+          emit(state.copyWith(formStatus: InitialFormStatus()));
       }catch(e) {
         emit(state.copyWith(formStatus: InitialFormStatus()));
 

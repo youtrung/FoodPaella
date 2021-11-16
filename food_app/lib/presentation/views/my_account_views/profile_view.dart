@@ -1,14 +1,14 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:food_app/bloc/login_bloc.dart';
 import 'package:food_app/bloc/user_bloc.dart';
 import 'package:food_app/constant/circular_loading.dart';
 import 'package:food_app/constant/colors.dart';
 import 'package:food_app/models/customer_model.dart';
 
 class ProfileView extends StatefulWidget {
-  CustomerModel? customerModel;
-  ProfileView({Key? key,this.customerModel}) : super(key: key);
+  ProfileView({Key? key}) : super(key: key);
 
   @override
   State<ProfileView> createState() => _ProfileViewState();
@@ -17,6 +17,7 @@ class ProfileView extends StatefulWidget {
 class _ProfileViewState extends State<ProfileView> {
   @override
   Widget build(BuildContext context) {
+    CustomerModel? customer=BlocProvider.of<LoginBloc>(context).customerModel;
     return Scaffold(
       appBar: AppBar(
         backgroundColor: AppColor.yellow,
@@ -28,7 +29,7 @@ class _ProfileViewState extends State<ProfileView> {
             child: Align(
               alignment: Alignment.center,
               child: GestureDetector(
-                onTap: () => context.read<UserBloc>().add(UserChangedEvent(customerModel:widget.customerModel)),
+                onTap: () => context.read<UserBloc>().add(UserChangedEvent(customerModel:customer)),
                   child: Text("UPDATE",style: TextStyle(color: Colors.blue,fontSize: 16),)
               ),
             ),
@@ -45,7 +46,7 @@ class _ProfileViewState extends State<ProfileView> {
               children: [
                 SizedBox(height: 20,),
                 TextFormField(
-                  initialValue: widget.customerModel == null ? null:widget.customerModel!.phone,
+                  initialValue: customer == null ? null:customer.phone,
                   decoration: InputDecoration(
                     border: InputBorder.none,
                     labelText: "Mobile phone",
@@ -53,13 +54,13 @@ class _ProfileViewState extends State<ProfileView> {
                 ),
                 Divider(height:20,color: Colors.grey.shade300,thickness: 5,),
                 TextFormField(
-                  initialValue: widget.customerModel == null ? null:widget.customerModel!.name,
+                  initialValue: customer == null ? null:customer.name,
                   decoration: InputDecoration(
                     labelText: "Name",
                   ),
                 ),
                 TextFormField(
-                  initialValue: widget.customerModel == null ? "":widget.customerModel!.email,
+                  initialValue: customer== null ? "":customer.email,
                   decoration: InputDecoration(
                       labelText: "Email",
                       border: InputBorder.none,

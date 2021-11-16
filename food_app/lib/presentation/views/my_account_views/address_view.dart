@@ -1,14 +1,14 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:food_app/bloc/login_bloc.dart';
 import 'package:food_app/bloc/user_bloc.dart';
 import 'package:food_app/constant/circular_loading.dart';
 import 'package:food_app/constant/colors.dart';
 import 'package:food_app/models/customer_model.dart';
 
 class AddressView extends StatefulWidget {
-  CustomerModel? customerModel;
-  AddressView({Key? key,this.customerModel}) : super(key: key);
+  AddressView({Key? key}) : super(key: key);
 
   @override
   State<AddressView> createState() => _AddressViewState();
@@ -17,6 +17,7 @@ class AddressView extends StatefulWidget {
 class _AddressViewState extends State<AddressView> {
   @override
   Widget build(BuildContext context) {
+    CustomerModel? customer=BlocProvider.of<LoginBloc>(context).customerModel;
     return Scaffold(
       appBar: AppBar(
         backgroundColor: AppColor.yellow,
@@ -28,7 +29,7 @@ class _AddressViewState extends State<AddressView> {
             child: Align(
               alignment: Alignment.center,
               child: GestureDetector(
-                  onTap: () => context.read<UserBloc>().add(UserChangedEvent(customerModel:widget.customerModel)),
+                  onTap: () => context.read<UserBloc>().add(UserChangedEvent(customerModel:customer)),
                   child: Text("UPDATE",style: TextStyle(color: Colors.blue,fontSize: 16),)
               ),
             ),
@@ -47,10 +48,10 @@ class _AddressViewState extends State<AddressView> {
                 TextFormField(
                   onChanged: (value)  {
                     setState(() {
-                      widget.customerModel!.address!.district=value;
+                      customer!.address!.district=value;
                     });
                   } ,
-                  initialValue: widget.customerModel == null ? null:widget.customerModel!.address!.district,
+                  initialValue:customer == null ? null:customer.address!.district,
                   decoration: InputDecoration(
                     labelText: "District",
                   ),
@@ -58,10 +59,10 @@ class _AddressViewState extends State<AddressView> {
                 TextFormField(
                   onChanged: (value) {
                     setState(() {
-                      widget.customerModel!.address!.ward=value;
+                      customer!.address!.ward=value;
                     });
                   },
-                  initialValue: widget.customerModel == null ? null:widget.customerModel!.address!.ward,
+                  initialValue: customer == null ? null:customer.address!.ward,
                   decoration: InputDecoration(
                     labelText: "Ward",
                   ),
@@ -69,10 +70,10 @@ class _AddressViewState extends State<AddressView> {
                 TextFormField(
                   onChanged: (value)  {
                     setState(() {
-                      widget.customerModel!.address!.city=value;
+                      customer!.address!.city=value;
                     });
                   },
-                  initialValue: widget.customerModel == null ? "":widget.customerModel!.address!.city,
+                  initialValue: customer == null ? "":customer.address!.city,
                   decoration: InputDecoration(
                     labelText: "City",
                   ),
@@ -80,10 +81,10 @@ class _AddressViewState extends State<AddressView> {
                 TextFormField(
                   onChanged: (value) {
                     setState(() {
-                      widget.customerModel!.address!.street=value;
+                      customer!.address!.street=value;
                     });
                   },
-                  initialValue: widget.customerModel == null ? "":widget.customerModel!.address!.street,
+                  initialValue: customer == null ? "":customer.address!.street,
                   decoration: InputDecoration(
                     labelText: "Street",
                   ),

@@ -3,17 +3,22 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:food_app/bloc/favorite_list_bloc.dart';
 import 'package:food_app/bloc/food_bloc.dart';
+import 'package:food_app/bloc/login_bloc.dart';
+import 'package:food_app/bloc/review_list_bloc.dart';
 import 'package:food_app/constant/back-ground-image.dart';
 import 'package:food_app/constant/widgets.dart';
+import 'package:food_app/models/customer_model.dart';
 import 'package:food_app/models/food_model.dart';
-import 'package:food_app/models/like_arguments.dart';
+import 'package:food_app/models/store_model.dart';
+import 'package:food_app/presentation/views/store_views/info_section.dart';
+import 'package:food_app/presentation/views/store_views/review_section.dart';
 import 'package:food_app/utils/helper.dart';
 
 import 'group_list_view.dart';
 
 class StoreView extends StatefulWidget {
-  LikeArguments? likeArguments;
-  StoreView({Key? key,this.likeArguments}): super(key: key);
+  Store? store;
+  StoreView({Key? key,this.store}): super(key: key);
 
   @override
   _StoreViewState createState() => _StoreViewState();
@@ -30,10 +35,11 @@ class _StoreViewState extends State<StoreView> with SingleTickerProviderStateMix
 
   @override
   Widget build(BuildContext context) {
+    CustomerModel? customer=BlocProvider.of<LoginBloc>(context).customerModel;
     List<Food> foods=[];
           return Scaffold(
               body: BlocProvider<FavoriteBloc>(
-                create: (context) =>FavoriteBloc(customerModel: widget.likeArguments!.customerModel),
+                create: (context) =>FavoriteBloc(customerModel:customer),
                 child: NestedScrollView(
                   headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
                     return <Widget>[
@@ -48,10 +54,10 @@ class _StoreViewState extends State<StoreView> with SingleTickerProviderStateMix
                                        .isNotEmpty;
                                 return IconButton(
                                     onPressed: () {
-                                      BlocProvider.of<FavoriteBloc>(context).add(AddToFavorite(store: widget.likeArguments!.store!));
+                                      BlocProvider.of<FavoriteBloc>(context).add(AddToFavorite(store: widget.store!));
                                     },
                                     icon: state is FavoriteState ?
-                                        _isItemAlreadyLike(widget.likeArguments!.store!.id) ?
+                                        _isItemAlreadyLike(widget.store!.id) ?
                                           Icon(Icons.favorite,color: Colors.red,):
                                           state is SuccessState ? Icon(state.icondata,color: state.color,):
                                           Icon(Icons.favorite_outline_sharp,color: Colors.white,) :
@@ -61,7 +67,7 @@ class _StoreViewState extends State<StoreView> with SingleTickerProviderStateMix
                           )
                         ],
                         flexibleSpace: FlexibleSpaceBar(
-                          background: BackgroundImage(image: Helper.getAssetName(fileName: widget.likeArguments!.store!.image ?? "")),
+                          background: BackgroundImage(image:widget.store!.image ?? ""),
                         ),
                         forceElevated: innerBoxIsScrolled,
                         backgroundColor: Colors.white,
@@ -102,13 +108,13 @@ class _StoreViewState extends State<StoreView> with SingleTickerProviderStateMix
                               if (state.foods != null)
                               {
                                 state.foods!.map((food) {
-                                  if(widget.likeArguments!.store!.foods!.contains(food.id)){
+                                  if(widget.store!.foods!.contains(food.id)){
                                     foods.add(food);
                                     return foods;
                                   }
                                   return foods;
                                 }).toList() ;
-                                return GroupFood(foods: foods,storeId: widget.likeArguments!.store!.id,);
+                                return GroupFood(foods: foods,storeId: widget.store!.id,);
                               }
                               return CircularLoading();
                             }else if (state is FailureFood) {
@@ -116,11 +122,14 @@ class _StoreViewState extends State<StoreView> with SingleTickerProviderStateMix
                             }else
                               return  CircularLoading();
                           }
-
-
                       ),
-                      Container(),
-                      Container(),
+                      BlocProvider<ReviewBloc>(
+                          create: (_) {
+                            return ReviewBloc();
+                          },
+                          child: ReviewSection(store: widget.store,)
+                      ),
+                      InfoSection(store: widget.store,),
                     ],
                   ),
                 ),

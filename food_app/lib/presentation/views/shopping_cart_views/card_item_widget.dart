@@ -4,6 +4,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:food_app/bloc/login_bloc.dart';
 import 'package:food_app/bloc/shopping_cart_bloc.dart';
 import 'package:food_app/constant/colors.dart';
 import 'package:food_app/constant/route_strings.dart';
@@ -14,8 +15,7 @@ import 'package:intl/intl.dart';
 
 
 class CardItemWidgets extends StatefulWidget {
-  CustomerModel? customerModel;
-   CardItemWidgets({Key? key,this.customerModel}) : super(key: key);
+   CardItemWidgets({Key? key}) : super(key: key);
 
   @override
   _CardItemWidgetsState createState() => _CardItemWidgetsState();
@@ -97,7 +97,7 @@ class _CardItemWidgetsState extends State<CardItemWidgets> {
                           textAlign: TextAlign.start,),
                       ),
                       ElevatedButton(onPressed: () {
-                        Navigator.pushNamed(context,BILL_ROUTE,arguments: widget.customerModel);
+                        Navigator.pushNamed(context,BILL_ROUTE);
                       }, child:Text("Get Bill"))
                     ],
                   )
