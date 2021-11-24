@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:food_app/constant/route_strings.dart';
 import 'package:food_app/models/customer_model.dart';
+import 'package:food_app/models/rate_model.dart';
 import 'package:food_app/models/result_model.dart';
 import 'package:food_app/services/api_services.dart';
 
@@ -73,10 +74,20 @@ static APIService<CustomerModel?> createCustomerWithEmailAndPassword(CustomerMod
     }
   );
 }
+static APIService<ResultModel> commentStore(RateModel? rateModel) {
+  return APIService(
+      url: Uri.http(baseAPI,"/api/customer/reviewStore"),
+      body:rateModel,
+      parse: (response) {
+        final result = parseResultResponses(response.body);
+        return result;
+      }
+  );
+}
 
 static APIService<ResultModel> updateUser(CustomerModel? customerModel) {
   return APIService(
-      url: Uri.http(baseAPI,"/api/customers/" + customerModel!.id.toString()),
+      url: Uri.http(baseAPI,"/api/customer/" + customerModel!.id.toString()),
       body: customerModel,
       parse: (response) {
         final result = parseResultResponses(response.body);

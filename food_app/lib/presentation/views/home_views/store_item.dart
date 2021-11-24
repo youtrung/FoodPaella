@@ -20,7 +20,7 @@ class _buildStoreItemState extends State<buildStoreItem> {
 
   double ratingStore() {
     double t=0.0;
-    if ( widget.store.reviews !=null) {
+    if ( widget.store.reviews !=null && widget.store.reviews!.length >0 ) {
       widget.store.reviews!.forEach((element) {
         t+=element.rate!;
       });
@@ -115,22 +115,22 @@ class _buildStoreItemState extends State<buildStoreItem> {
                       ],
                     ),
                   ),
+                  ratingStore() >0.0 ?
                   Expanded(
                     flex: 2,
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Text(
-                          "${ratingStore()}",
+                          "${ratingStore().toStringAsFixed(1)}",
                           style: TextStyle(color: Colors.white,fontWeight: FontWeight.w700,fontSize: 18),
                         ),
                         RatingBar(rating:ratingStore(),),
-                        // Icon(
-                        //   Icons.star,
-                        //   color:Colors.white
-                        // )
                       ],
                     ),
+                  ): Expanded(
+                    flex: 2,
+                    child:Container()
                   )
                 ],
               ),

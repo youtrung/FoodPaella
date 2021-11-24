@@ -1,6 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:food_app/models/customer_model.dart';
-import 'package:food_app/models/store_model.dart';
+import 'package:food_app/models/rate_model.dart';
 import 'package:food_app/repositories/customer_repository.dart';
 import 'package:food_app/services/api_services.dart';
 
@@ -8,6 +8,12 @@ class ReviewEvent {}
 class EventGetReviewUserById extends ReviewEvent {
   String? customerId;
   EventGetReviewUserById({this.customerId});
+}
+class EventSendReview extends ReviewEvent {
+  String? customerId;
+  String? storeId;
+  double? rate;
+  EventSendReview({this.customerId,this.storeId,this.rate});
 }
 class ReviewState {}
 class ReviewFailedState extends ReviewState  {
@@ -37,8 +43,20 @@ class ReviewBloc extends Bloc<ReviewEvent,ReviewState> {
       }catch (e) {
         emit(ReviewFailedState(error: e.toString()));
       }
-    }
-    );
+    });
+
+    on<EventSendReview> ((event,emit) async {
+      try {
+        RateModel rateModel=new RateModel();
+        rateModel.store_id=event.storeId;
+        rateModel.customer_id=event.customerId;
+        rateModel.rate=event.rate;
+        await APIWeb().post(CustomerRepository.commentStore(rateModel));
+        print("review success");
+      }catch (e) {
+        print("review failed");
+      }
+    });
   }
 
 }

@@ -1,19 +1,37 @@
-import 'package:firebase_core/firebase_core.dart';
+import 'dart:math';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 
-Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-  await Firebase.initializeApp(
-      options: const FirebaseOptions(
-        apiKey: 'AIzaSyAHAsf51D0A407EklG1bs-5wA7EbyfNFg0',
-        appId: '1:448618578101:ios:2bc5c1fe2ec336f8ac3efc',
-        messagingSenderId: '448618578101',
-        projectId: 'react-native-firebase-testing',
-      ));
-  print('Handling a background message ${message.messageId}');
+class LocalNotificationService {
+  static final FlutterLocalNotificationsPlugin _notificationsPlugin
+  =FlutterLocalNotificationsPlugin();
+  static void initialize() {
+    final InitializationSettings initializationSettings=
+    InitializationSettings(android: AndroidInitializationSettings("@mipmap/ic_launcher"));
+    _notificationsPlugin.initialize(initializationSettings);
+
+  }
+  static Future<void> display(RemoteMessage message) async {
+    try {
+      final id = Random().nextInt(100);
+      final NotificationDetails notificationDetails=NotificationDetails(
+        android: AndroidNotificationDetails(
+          "default_notification_channel_id",
+          "fcm_default_channel",
+          importance: Importance.max,
+          priority: Priority.high,
+        )
+      );
+      await _notificationsPlugin.show(
+          id, message.notification!.title,
+          message.notification!.body,
+          notificationDetails,
+      );
+
+    } on Exception catch (e) {
+        print("error print: ${e.toString()}");
+    }
+  }
 }
-
-late AndroidNotificationChannel channel;
-
-late FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;

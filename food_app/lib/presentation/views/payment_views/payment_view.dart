@@ -76,7 +76,6 @@ class _PaymentViewState extends State<PaymentView> {
                         child: ElevatedButton(
                           onPressed: () {
                             if (_formKey.currentState!.validate()) {
-                              print(customer!.address!.street);
                               cartOrder.forEach((element) {
                                 double t =0;
                                 element.foods!.forEach((f) { t+=(f.quantity* f.price!.toDouble()) ; });
