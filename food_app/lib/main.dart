@@ -3,19 +3,20 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:food_app/bloc/search_bloc.dart';
-import 'package:food_app/bloc/shopping_cart_bloc.dart';
+import 'package:food_app/bloc/shop_cart_bloc.dart';
 import 'package:food_app/bloc/user_bloc.dart';
 import 'package:food_app/constant/colors.dart';
 import 'package:food_app/presentation/router.dart';
 import 'package:food_app/presentation/views/introduce_views/splash_view.dart';
-import 'package:food_app/services/cloud_message_services.dart';
 import 'bloc/filter_category_bloc.dart';
 import 'bloc/food_bloc.dart';
 import 'bloc/login_bloc.dart';
 import 'bloc/navigator_bloc.dart';
 import 'bloc/notification_bloc.dart';
-import 'bloc/store_bloc.dart';
-import 'constant/route_strings.dart';
+import 'bloc/review_list_bloc.dart';
+import 'bloc/review_list_bloc_v2.dart';
+import 'bloc/validation_bloc.dart';
+
 
 
 
@@ -41,9 +42,6 @@ void main() async{
           BlocProvider<CartBloc>(
           create: (context)=>CartBloc(),
           ),
-          BlocProvider<StoreBloc>(
-            create: (context)=>StoreBloc()..add(GetStoresEvent()),
-          ),
           BlocProvider<FoodBloc>(
             create: (context)=>FoodBloc()..add(getFoodEvent()),
           ),
@@ -56,9 +54,17 @@ void main() async{
           BlocProvider<SearchBloc>(
             create: (context)=>SearchBloc(),
           ),
+          BlocProvider<ReviewBloc>(
+          create: (context)=>ReviewBloc()
+          ),
+          BlocProvider<CommentBloc>(
+              create: (context)=>CommentBloc()
+          ),
+          BlocProvider<ValidateBloc>(
+              create: (context)=>ValidateBloc()
+          )
         ],
         child: MyApp(
-          notificationBloc:notificationBloc,
           router:AppRouter(),
           navigatorKey: navigatorKey,
       ),
@@ -68,16 +74,12 @@ void main() async{
 class MyApp extends StatelessWidget {
   final AppRouter router;
   final GlobalKey<NavigatorState> navigatorKey;
-  final NotificationBloc notificationBloc;
-  MyApp({required this.router,required this.navigatorKey,required this.notificationBloc});
+  MyApp({required this.router,required this.navigatorKey});
   // This widget is the root of your application.
 
   @override
   Widget build(BuildContext context) {
-    notificationBloc.initialize(context);
-    FirebaseMessaging.onMessageOpenedApp.listen((message) {
-      BlocProvider.of<NavigatorBloc>(context).add(NavigateToRateEvent(storeId: message.data["store_id"]));
-    });
+
     return MaterialApp(
       navigatorKey: navigatorKey,
       title: 'Flutter Demo',

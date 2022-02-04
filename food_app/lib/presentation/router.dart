@@ -1,18 +1,18 @@
 
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:food_app/bloc/review_list_bloc.dart';
+import 'package:food_app/bloc/notification_bloc.dart';
+import 'package:food_app/bloc/store_bloc.dart';
 import 'package:food_app/constant/route_strings.dart';
-import 'package:food_app/models/customer_model.dart';
-import 'package:food_app/models/like_arguments.dart';
 import 'package:food_app/models/store_model.dart';
 import 'package:food_app/presentation/views/home_views/main_view.dart';
+import 'package:food_app/presentation/views/introduce_views/code_validation_view.dart';
 import 'package:food_app/presentation/views/introduce_views/forgot_password_view.dart';
 import 'package:food_app/presentation/views/introduce_views/login_view.dart';
 import 'package:food_app/presentation/views/introduce_views/landing_view.dart';
 import 'package:food_app/presentation/views/introduce_views/register_view.dart';
+import 'package:food_app/presentation/views/introduce_views/reset_password_view.dart';
 import 'package:food_app/presentation/views/introduce_views/splash_view.dart';
 import 'package:food_app/presentation/views/my_account_views/address_view.dart';
 import 'package:food_app/presentation/views/my_account_views/profile_view.dart';
@@ -23,6 +23,9 @@ import 'package:food_app/presentation/views/store_views/rate_view.dart';
 import 'package:food_app/presentation/views/store_views/store_view.dart';
 
 class AppRouter {
+
+  NotificationBloc notificationBloc = new NotificationBloc();
+
   Route generateRoute(RouteSettings settings) {
     switch (settings.name) {
       case "/":
@@ -36,7 +39,10 @@ class AppRouter {
       case FORGOT_PASSWORD_ROUTE:
         return MaterialPageRoute(builder: (_)=> ForgotPasswordView());
       case HOME_ROUTE:
-        return MaterialPageRoute(builder: (_)=> HomeView());
+        return MaterialPageRoute(builder: (_)=> BlocProvider<StoreBloc>(
+          create: (context)=>StoreBloc()..add(GetStoresEvent()),
+              child: HomeView(notificationBloc:notificationBloc,)
+        ));
       case STORE_ROUTE:
         final args=settings.arguments as Store;
         return MaterialPageRoute(builder: (_)=>StoreView(store:args,));
@@ -50,13 +56,17 @@ class AppRouter {
         return MaterialPageRoute(builder: (_)=> PaymentView());
       case FILTER_ROUTE:
         final args=settings.arguments as String;
-        return MaterialPageRoute(builder: (_)=> FilterView(typeOfFood:args,));
+        return MaterialPageRoute(builder: (_)=> BlocProvider<StoreBloc>(
+          create:(context)=>StoreBloc(),child: FilterView(typeOfFood:args,)));
       case RATE_ROUTE:
         final args=settings.arguments as String?;
-        return MaterialPageRoute(builder: (_)=> BlocProvider<ReviewBloc>(
-            create: (context)=>ReviewBloc(),
-            child: RateView(storeId: args,)
-        ));
+        return MaterialPageRoute(builder: (_)=> RateView(storeId: args,));
+      case SEND_CODE_ROUTE:
+        final args=settings.arguments as String;
+        return MaterialPageRoute(builder: (_)=> OtpScreen(email: args,));
+      case RESET_PASSWORD_ROUTE:
+        final args=settings.arguments as String;
+        return MaterialPageRoute(builder: (_)=> ResetPasswordView(email: args));
       default:
         return MaterialPageRoute(builder: (_) => Container());
     }

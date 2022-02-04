@@ -2,6 +2,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:food_app/bloc/favorite_list_bloc.dart';
+import 'package:food_app/bloc/review_list_bloc.dart';
+import 'package:food_app/constant/circular_loading.dart';
 import 'package:food_app/constant/colors.dart';
 import 'package:food_app/constant/rating_bar_widget.dart';
 import 'package:food_app/constant/route_strings.dart';
@@ -17,7 +19,6 @@ class buildStoreItem extends StatefulWidget {
 }
 
 class _buildStoreItemState extends State<buildStoreItem> {
-
   double ratingStore() {
     double t=0.0;
     if ( widget.store.reviews !=null && widget.store.reviews!.length >0 ) {
@@ -27,6 +28,11 @@ class _buildStoreItemState extends State<buildStoreItem> {
       return t/widget.store.reviews!.length.toDouble();
     } else
       return 0.0;
+  }
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
   }
 
   @override
@@ -115,7 +121,7 @@ class _buildStoreItemState extends State<buildStoreItem> {
                       ],
                     ),
                   ),
-                  ratingStore() >0.0 ?
+                  ratingStore()>0?
                   Expanded(
                     flex: 2,
                     child: Column(
@@ -125,57 +131,17 @@ class _buildStoreItemState extends State<buildStoreItem> {
                           "${ratingStore().toStringAsFixed(1)}",
                           style: TextStyle(color: Colors.white,fontWeight: FontWeight.w700,fontSize: 18),
                         ),
-                        RatingBar(rating:ratingStore(),),
-                      ],
-                    ),
-                  ): Expanded(
-                    flex: 2,
-                    child:Container()
-                  )
+                        RatingBar(rating:ratingStore(),),],
+                    )):Expanded(
+                            flex: 2,
+                            child:Container()
+                        )
                 ],
               ),
             )
           ],
-        ),
+        )
       )
-      // Container(
-      //   margin:EdgeInsetsDirectional.fromSTEB(20,0, 20, 40),
-      //   child:AspectRatio(
-      //     aspectRatio: 3/1,
-      //     child:Container(
-      //       child:Row(
-      //         children: [
-      //           AspectRatio(
-      //             aspectRatio:1/1,
-      //             child: ClipRRect(
-      //               borderRadius:BorderRadius.circular(10),
-      //               child: Image.network(widget.store.image ?? "" ,
-      //                 fit: BoxFit.cover,
-      //               ),
-      //             ),
-      //           ),
-      //           SizedBox(width: 20,),
-      //           AspectRatio(
-      //             aspectRatio: 4/3,
-      //             child:
-      //             Column(
-      //               mainAxisAlignment:MainAxisAlignment.start,
-      //               crossAxisAlignment: CrossAxisAlignment.start,
-      //               children:[
-      //                 Text("${widget.store.name}",
-      //                   style: TextStyle(
-      //                       fontSize: 18,
-      //                       fontWeight: FontWeight.bold
-      //                   ),
-      //                 ),
-      //             ],
-      //             ),
-      //           ),
-      //        ]
-      //       ),
-      //     ),
-      //   ),
-      // ),
     );
   }
 }

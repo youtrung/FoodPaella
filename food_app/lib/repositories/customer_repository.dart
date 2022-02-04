@@ -21,6 +21,12 @@ static ResultModel parseResultResponses(String resp) {
   return result;
 }
 
+static List<RateModel> parseRateResponses(String resp) {
+  final  parsed=json.decode(resp).cast<Map<String,dynamic>>();
+  return parsed.map<RateModel>((json)=>RateModel.fromJSON(json)).toList();
+}
+
+
 static APIService<CustomerModel?>? getCustomerById(String customerId) {
   return APIService(
       url: Uri.http(baseAPI,"/api/customers/$customerId"),
@@ -85,9 +91,19 @@ static APIService<ResultModel> commentStore(RateModel? rateModel) {
   );
 }
 
+static APIService<List<RateModel>> getReviewsStore(String? storeId) {
+  return APIService(
+      url: Uri.http(baseAPI,"/api/customer/getReviewsOfStore/$storeId"),
+      parse: (response) {
+        final result = parseRateResponses(response.body);
+        return result;
+      }
+  );
+}
+
 static APIService<ResultModel> updateUser(CustomerModel? customerModel) {
   return APIService(
-      url: Uri.http(baseAPI,"/api/customer/" + customerModel!.id.toString()),
+      url: Uri.http(baseAPI,"/api/customers/" + customerModel!.id.toString()),
       body: customerModel,
       parse: (response) {
         final result = parseResultResponses(response.body);
@@ -95,7 +111,45 @@ static APIService<ResultModel> updateUser(CustomerModel? customerModel) {
       }
   );
 }
+static APIService<String?> forgotPassword(String? email) {
+  return APIService(
+      url: Uri.http(baseAPI,"/api/customer/forgotPassword"),
+      body:{
+        "email":email
+      },
+      parse: (response) {
+        final result = json.decode(response.body);
+        return result["message"];
+      }
+  );
+}
+static APIService<bool> checkVerificationCode(String? email,int code) {
+  return APIService(
+      url: Uri.http(baseAPI,"/api/customer/checkVerificationCode"),
+      body:{
+        "code":code,
+        "email":email
+      },
+      parse: (response) {
+        final result = json.decode(response.body);
+        return result;
+      }
+  );
+}
 
+static APIService<String?> resetPassword(String? email,String? password) {
+  return APIService(
+      url: Uri.http(baseAPI,"/api/customer/resetPassword"),
+      body:{
+        "email":email,
+        "password":password
+      },
+      parse: (response) {
+        final result = json.decode(response.body);
+        return result;
+      }
+  );
+}
 
 
 

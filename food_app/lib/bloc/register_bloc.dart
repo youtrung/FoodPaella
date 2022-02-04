@@ -23,7 +23,7 @@ class SubmissionSuccess extends FormSubmissionStatus {
 }
 
 class SubmissionFailed extends FormSubmissionStatus {
-  final Exception exception;
+  final String exception;
   SubmissionFailed(this.exception);
 }
 
@@ -83,13 +83,11 @@ class RegisterBloc extends Bloc<RegisterEvent,RegisterState> {
         emit(state.copyWith(formStatus: FormSubmitting()));
         await Future.delayed(const Duration(seconds: 1));
         final data =await APIWeb().post(CustomerRepository.createCustomerWithEmailAndPassword(event.customerModel));
-        final token =await APIWeb().post(CustomerRepository.saveToken(event.customerModel));
         SharedPreferences pref=await SharedPreferences.getInstance();
-        await pref.setString("token",token!);
-        await pref.setString("user",jsonEncode(data));
+        pref.clear();
         emit(state.copyWith(formStatus: SubmissionSuccess(customerModel: data)));
       }catch(e) {
-        emit(state.copyWith(formStatus: SubmissionFailed(e as Exception)));
+        emit(state.copyWith(formStatus: SubmissionFailed(e.toString())));
       }
     }
 

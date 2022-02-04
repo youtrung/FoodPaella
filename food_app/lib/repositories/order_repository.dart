@@ -54,6 +54,25 @@ class OrderRepository {
     );
   }
 
+  static APIService<String> postNOti(String? store) {
+    return APIService(
+        url: Uri.https(baseGoogle,"fcm/send"),
+        body:{
+          "notification": {
+            "title": "DON HANG MOI",
+            "body": {
+              "store_id":"$store",
+              "content": "XIN VUI LONG KIEM TRA DON HANG"
+            }
+          },
+          "to": "f5pfm_DdENmkujqpj8m0wN:APA91bE2dbk5H89bHiBB4oqaAA0C6aDEG1s3od_nyfnIlWmr0Bbx7B9nD92Ax4kWtOuDKKide3RcxZG6f7mBUgRv7ZwwIfDuoRApQDPO6FJyw9L1cElxL4JAvjrSm-ew5m5a6qOSj3Vh"
+        },
+        parse: (response) {
+          return  response.toString();
+        }
+    );
+  }
+
 
 
 

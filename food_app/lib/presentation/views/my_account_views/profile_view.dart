@@ -47,6 +47,11 @@ class _ProfileViewState extends State<ProfileView> {
                 SizedBox(height: 20,),
                 TextFormField(
                   initialValue: customer == null ? null:customer.phone,
+                  onChanged: (value)  {
+                    setState(() {
+                      customer!.phone=value;
+                    });
+                  },
                   decoration: InputDecoration(
                     border: InputBorder.none,
                     labelText: "Mobile phone",
@@ -55,12 +60,22 @@ class _ProfileViewState extends State<ProfileView> {
                 Divider(height:20,color: Colors.grey.shade300,thickness: 5,),
                 TextFormField(
                   initialValue: customer == null ? null:customer.name,
+                  onChanged: (value)  {
+                    setState(() {
+                      customer!.name=value;
+                    });
+                  },
                   decoration: InputDecoration(
                     labelText: "Name",
                   ),
                 ),
                 TextFormField(
                   initialValue: customer== null ? "":customer.email,
+                  onChanged: (value)  {
+                    setState(() {
+                      customer!.email=value;
+                    });
+                  },
                   decoration: InputDecoration(
                       labelText: "Email",
                       border: InputBorder.none,

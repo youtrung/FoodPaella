@@ -6,7 +6,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:food_app/constant/route_strings.dart';
+import 'package:food_app/models/customer_model.dart';
 
+import 'login_bloc.dart';
 import 'navigator_bloc.dart';
 
 
@@ -21,6 +23,7 @@ class NotificationBloc extends Bloc<NotificationEvent,NotificationState>  {
   }
 
   initialize(BuildContext context) async {
+    CustomerModel? customer=BlocProvider.of<LoginBloc>(context).customerModel;
     final NotificationDetails notificationDetails=NotificationDetails(
         android: AndroidNotificationDetails(
           "default_notification_channel_id",
@@ -40,32 +43,41 @@ class NotificationBloc extends Bloc<NotificationEvent,NotificationState>  {
     String? token=await FirebaseMessaging.instance.getToken();
     print(token);
     // FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
-
     FirebaseMessaging.onMessage.listen((RemoteMessage message) async {
       if (message.notification!=null) {
-        await _notificationsPlugin.show(
-          id, message.notification!.title,
-          message.notification!.body,
-          notificationDetails,
-          payload: message.data["store_id"]
-        );
-        add(NotificationEvent(message: message));
+        print(message.data);
+         if (message.data["customer_id"] == customer!.id) {
+           print("thuc hien add Notifi");
+
+          await _notificationsPlugin.show(
+              id, message.notification!.title,
+              message.notification!.body,
+              notificationDetails,
+              payload: message.data["store_id"]
+          );
+           BlocProvider.of<NotificationBloc>(context).add(NotificationEvent(message: message));
+        }
       }
     }
 
 
     );
   }
+
   FlutterLocalNotificationsPlugin  _notificationsPlugin = FlutterLocalNotificationsPlugin();
   NotificationBloc():super(StartUpNotificationState()) {
       on<NotificationEvent> ( (event,emit) async {
         try {
           emit(LoadingNotification());
+          print("thong bao nhan dc NotificationEVENT");
           await Future.delayed(const Duration(seconds: 2));
-          if(!_isItemAlreadyAddedOrder(event.message!.data["store_id"])){
+          if(!_isItemAlreadyAddedOrder(event.message!.data["store_id"]))
+          {
             messageList!.add(event.message!);
-          }else  emit(NotificationErrorState());
+          }else emit(NotificationErrorState());
+          print("cb emit reciveNotiEVENT");
           emit(ReciveNotification(messageList: messageList));
+          print("xong emit reciveNotiEVENT");
         }catch(e) {
           emit(NotificationErrorState(error: e.toString()));
         }

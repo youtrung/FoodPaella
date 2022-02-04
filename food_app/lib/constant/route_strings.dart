@@ -10,5 +10,7 @@ const ADDRESS_ROUTE="/address_view";
 const BILL_ROUTE="/bill_view";
 const FILTER_ROUTE="/filter_view";
 const RATE_ROUTE="/rate_view";
-
+const SEND_CODE_ROUTE="/send_code_view";
+const RESET_PASSWORD_ROUTE="/reset_password_view";
 const baseAPI="api-order-food.herokuapp.com";
+const baseGoogle="fcm.googleapis.com";

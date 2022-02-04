@@ -7,11 +7,15 @@ import 'package:food_app/constant/widgets.dart';
 import 'package:food_app/utils/helper.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-class ForgotPasswordView extends StatelessWidget {
+class ResetPasswordView extends StatelessWidget {
+  String email;
+  ResetPasswordView({required this.email});
+
+
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
-    final TextEditingController _emailController =TextEditingController();
+    final TextEditingController _passwordController =TextEditingController();
     return Stack(
       children: [
         ShaderMask(
@@ -62,9 +66,9 @@ class ForgotPasswordView extends StatelessWidget {
                       Container(
                         width: size.width * 0.8,
                         child: Text(
-                          'Enter your email we will send a code to reset your password',
+                          'Enter your new password we will up to date your password',
                           style: TextStyle(
-                            color: Colors.white
+                              color: Colors.white
                           ),
                         ),
                       ),
@@ -72,21 +76,20 @@ class ForgotPasswordView extends StatelessWidget {
                         height: 20,
                       ),
                       CustomTestInput(
-                        hintText: "Your Email",
+                        hintText: "Your password",
                         icons: FontAwesomeIcons.envelope,
-                        textInputType: TextInputType.emailAddress,
-                        textInputAction: TextInputAction.next,
-                        textEditingController: _emailController,
+                        textEditingController: _passwordController,
+                        obscureText: true,
                       ),
                       SizedBox(
                         height: 20,
                       ),
                       ElevatedButton(
                           onPressed: () {
-                            context.read<UserBloc>().add(ForgotPasswordEvent(email:_emailController.text));
-                            Navigator.pushNamed(context,SEND_CODE_ROUTE,arguments:_emailController.text);
+                            context.read<UserBloc>().add(ResetPasswordEvent(email: this.email,password: _passwordController.text));
+                            Navigator.of(context).pushReplacementNamed(LANDING_ROUTE);
                           },
-                          child: Text("SEND"),
+                          child: Text("Update password"),
                           style:ButtonStyle(
                               backgroundColor: MaterialStateProperty.all(Colors.indigo),
                               shape: MaterialStateProperty.all(

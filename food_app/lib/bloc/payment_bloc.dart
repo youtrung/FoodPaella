@@ -53,6 +53,7 @@ class PaymentBloc extends Bloc<OrderEvent,PaymentState> {
       try {
         emit(PaymentLoadingState());
           final data=await APIWeb().post(OrderRepository.postOrder(event.order));
+        final notiToWeb=await APIWeb().postNoti(OrderRepository.postNOti(event.order!.storeId));
         emit(PaymentSuccessState());
       }catch(e) {
           emit(PaymentFailedState(error: e.toString()));

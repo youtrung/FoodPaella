@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:food_app/bloc/shopping_cart_bloc.dart';
+import 'package:food_app/bloc/shop_cart_bloc.dart';
 import 'package:food_app/constant/colors.dart';
 import 'package:food_app/models/customer_model.dart';
 import 'package:food_app/models/food_model.dart';

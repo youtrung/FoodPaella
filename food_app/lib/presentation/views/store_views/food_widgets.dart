@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:food_app/bloc/food_quantity_bloc.dart';
 import 'package:food_app/bloc/login_bloc.dart';
-import 'package:food_app/bloc/shopping_cart_bloc.dart';
+import 'package:food_app/bloc/shop_cart_bloc.dart';
 import 'package:food_app/constant/my_icon.dart';
 import 'package:food_app/models/food_model.dart';
 import 'package:food_app/models/order_model.dart';

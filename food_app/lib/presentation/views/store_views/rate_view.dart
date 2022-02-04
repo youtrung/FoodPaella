@@ -1,5 +1,4 @@
 import 'package:awesome_dialog/awesome_dialog.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -7,6 +6,7 @@ import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:food_app/bloc/login_bloc.dart';
 import 'package:food_app/bloc/notification_bloc.dart';
 import 'package:food_app/bloc/review_list_bloc.dart';
+import 'package:food_app/constant/route_strings.dart';
 import 'package:food_app/models/customer_model.dart';
 
 class RateView extends StatelessWidget {
@@ -92,13 +92,13 @@ class RateView extends StatelessWidget {
                               '',
                               btnOkOnPress: () {
                                 BlocProvider.of<NotificationBloc>(context).add(DelNotificationEvent(storeId:storeId));
-                                Navigator.of(context).maybePop();
+                                Navigator.of(context).pushReplacementNamed(HOME_ROUTE);
                               },
                               btnOkIcon: Icons.check_circle,
                               onDissmissCallback: (type) {
                                 if (type==DismissType.TOP_ICON){
                                   BlocProvider.of<NotificationBloc>(context).add(DelNotificationEvent(storeId:storeId));
-                                  Navigator.of(context).maybePop();
+                                  Navigator.of(context).pushReplacementNamed(HOME_ROUTE);
                                 };
                                 debugPrint('Dialog Dissmiss from callback $type');
                               })..show();

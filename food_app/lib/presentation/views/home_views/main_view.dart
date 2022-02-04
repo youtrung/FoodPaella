@@ -1,8 +1,11 @@
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:food_app/bloc/login_bloc.dart';
-import 'package:food_app/bloc/shopping_cart_bloc.dart';
+import 'package:food_app/bloc/navigator_bloc.dart';
+import 'package:food_app/bloc/notification_bloc.dart';
+import 'package:food_app/bloc/shop_cart_bloc.dart';
 import 'package:food_app/constant/my_icon.dart';
 import 'package:food_app/constant/route_strings.dart';
 import 'package:food_app/models/customer_model.dart';
@@ -16,7 +19,8 @@ import 'favorite_section.dart';
 
 
 class HomeView extends StatefulWidget {
-  HomeView({Key? key}) : super(key: key);
+  final NotificationBloc notificationBloc;
+  HomeView({Key? key,required this.notificationBloc}) : super(key: key);
 
   @override
   _HomeViewState createState() => _HomeViewState();
@@ -37,6 +41,10 @@ int _currentIndex=0;
 
   @override
   Widget build(BuildContext context) {
+    widget.notificationBloc.initialize(context);
+    FirebaseMessaging.onMessageOpenedApp.listen((message) {
+      BlocProvider.of<NavigatorBloc>(context).add(NavigateToRateEvent(storeId: message.data["store_id"]));
+    });
     final screens=[
       HomeSection(),
       OrderSection(),

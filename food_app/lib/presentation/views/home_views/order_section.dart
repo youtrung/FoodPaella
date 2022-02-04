@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:food_app/bloc/login_bloc.dart';
 import 'package:food_app/bloc/payment_bloc.dart';
-import 'package:food_app/bloc/shopping_cart_bloc.dart';
+import 'package:food_app/bloc/shop_cart_bloc.dart';
 import 'package:food_app/constant/colors.dart';
 import 'package:food_app/models/customer_model.dart';
 import 'package:food_app/presentation/views/shopping_cart_views/card_item_widget.dart';

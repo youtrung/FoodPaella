@@ -12,13 +12,24 @@ class UserChangedEvent extends UserEvent {
 class LogoutEvent extends UserEvent {
 
 }
+class ForgotPasswordEvent extends UserEvent {
+String? email;
+ForgotPasswordEvent({this.email});
+}
+
+class ResetPasswordEvent extends UserEvent {
+  String? email;
+  String? password;
+  ResetPasswordEvent({this.email,this.password});
+}
 
 class UserState{
 }
 class UserLoadingState extends UserState{}
 class UserSuccessState extends UserState{
+  String? email;
   CustomerModel? customerModel;
-  UserSuccessState({this.customerModel});
+  UserSuccessState({this.customerModel,this.email});
 }
 class FailedState extends UserState {
   String? error;
@@ -52,6 +63,23 @@ class UserBloc extends Bloc<UserEvent,UserState> {
 
     });
 
+    on<ForgotPasswordEvent> ((event,emit) async {
+      try {
+        await Future.delayed(const Duration(seconds: 2));
+        final data =await APIWeb().post(CustomerRepository.forgotPassword(event.email));
+      }catch(e) {
+        emit(FailedState(error:"invalid email"));
+      }
+    });
+
+    on<ResetPasswordEvent> ((event,emit) async {
+      try {
+        final data =await APIWeb().post(CustomerRepository.resetPassword(event.email,event.password));
+      }catch(e) {
+        print("update failed");
+        emit(FailedState(error:"invalid email"));
+      }
+    });
 
 
   }

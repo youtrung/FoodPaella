@@ -10,6 +10,7 @@ class CustomerModel {
   String? phone;
   String? email;
   Address? address;
+  String? code;
   CustomerModel({
     this.id,
     this.name,
@@ -18,7 +19,8 @@ class CustomerModel {
     this.loveStoreIds,
     this.phone,
     this.email,
-    this.address
+    this.address,
+    this.code
   }
   );
   factory CustomerModel.initial() { // class initial
@@ -26,6 +28,7 @@ class CustomerModel {
       avatar: "",
       loveStoreIds: <String>[],
       phone:"",
+      code: "",
       address: Address.initial(),
     );
   }

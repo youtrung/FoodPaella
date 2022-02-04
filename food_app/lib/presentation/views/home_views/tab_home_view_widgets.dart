@@ -26,9 +26,9 @@ class _TabHomeViewState extends State<TabHomeView> with SingleTickerProviderStat
 
   final listCategory=[
     CategoryItem(title: "Healthy", fileName: "diet.png"),
-    CategoryItem(title: "Drinks", fileName: "drink.png"),
+    CategoryItem(title: "Đồ uống", fileName: "drink.png"),
     CategoryItem(title: "Fast food", fileName: "food-truck.png"),
-    CategoryItem(title: "Noddles", fileName: "noddles.png"),
+    CategoryItem(title: "Bún", fileName: "noddles.png"),
     CategoryItem(title: "Cơm", fileName: "rice.png"),
     CategoryItem(title: "Snacks", fileName: "snack.png"),
     CategoryItem(title: "Traditional", fileName: "traditional-food.png"),
@@ -199,12 +199,19 @@ class _TabHomeViewState extends State<TabHomeView> with SingleTickerProviderStat
                         listStore.sort((a,b) {
                           double ta=0.0;
                           double tb=0.0;
-                          a.reviews!.forEach((element) {
-                            ta+=element.rate!;
-                          });
-                          b.reviews!.forEach((element) {
-                            tb+=element.rate!;
-                          });
+                          if(a.reviews!.length==0 || b.reviews!.length==0){
+                            return tb.compareTo(ta);
+                          }
+                          if(a.reviews!.length>0){
+                            a.reviews!.forEach((element) {
+                              ta+=element.rate!;
+                            });
+                          }
+                          if(b.reviews!.length>0){
+                            b.reviews!.forEach((element) {
+                              tb+=element.rate!;
+                            });
+                          }
                           var ra=ta/a.reviews!.length;
                           var rb=tb/b.reviews!.length;
                           return rb.compareTo(ra);

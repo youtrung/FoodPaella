@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:food_app/bloc/login_bloc.dart';
 import 'package:food_app/bloc/payment_bloc.dart';
-import 'package:food_app/bloc/shopping_cart_bloc.dart';
+import 'package:food_app/bloc/shop_cart_bloc.dart';
 import 'package:food_app/constant/circular_loading.dart';
 import 'package:food_app/constant/colors.dart';
 import 'package:food_app/constant/route_strings.dart';
@@ -37,6 +37,7 @@ class _PaymentViewState extends State<PaymentView> {
   Widget build(BuildContext context) {
     final _formKey=GlobalKey<FormState>();
     final formatCurrency = new NumberFormat();
+    SnackBar mySnackBar=SnackBar(content: Text("Please update address"));
     var cartOrder=BlocProvider.of<CartBloc>(context).cartOrder;
     CustomerModel? customer=BlocProvider.of<LoginBloc>(context).customerModel;
     List<Food> foodList=[];
@@ -91,14 +92,16 @@ class _PaymentViewState extends State<PaymentView> {
                                         desc:
                                         'You placed the order successfully.You will get your food within 26 minutes. Thanks for using our service.Enjoy your food :)',
                                         btnOkOnPress: () {
-                                          Navigator.of(context).maybePop();
                                           BlocProvider.of<CartBloc>(context).add(ClearCart());
+                                          Navigator.pushReplacementNamed(context,HOME_ROUTE);
                                         },
                                         btnOkIcon: Icons.check_circle,
                                         onDissmissCallback: (type) {
                                         debugPrint('Dialog Dissmiss from callback $type');
                                         })..show();
                               });
+                            }else {
+                              ScaffoldMessenger.of(context).showSnackBar(mySnackBar);
                             }
                           },
                           child: Text("ORDER NOW",style:TextStyle(
@@ -204,10 +207,21 @@ class _PaymentViewState extends State<PaymentView> {
                               Row(
                                 children: [
                                   Flexible(
-                                    child: Text("Đường ${customer.address!.street},phường:${customer.address!.ward},"
-                                        "quận: ${customer.address!.district}, thành phố : ${customer.address!.city} ",
-                                      softWrap: true,
+                                    child:TextFormField(
+                                      decoration: InputDecoration(
+                                        errorMaxLines: 2,
+                                      ),
+                                      initialValue:"Đường ${customer.address!.street},phường:${customer.address!.ward},"
+                                          "quận: ${customer.address!.district}, thành phố : ${customer.address!.city} ",
+                                      validator: (value) {
+                                        if (customer.address!.street!.isEmpty||customer.address!.ward!.isEmpty||
+                                            customer.address!.district!.isEmpty||customer.address!.city!.isEmpty) {
+                                          return "please update your address";
+                                        }else return null;
+                                      },
                                       style: TextStyle(fontSize: 16),
+                                      maxLines: 2,
+                                      enabled: false,
                                     ),
                                   ),
                                   OutlinedButton(onPressed: () {

@@ -39,7 +39,9 @@ class _NotificationSectionState extends State<NotificationSection> {
     return BlocBuilder<NotificationBloc, NotificationState>(
       builder: (context,state) {
         if (state is ReciveNotification) {
+          print("thong bao khoi dong");
           if(state.messageList!.length > 0) {
+            print("thong bao ${state.messageList}");
             return ListView.builder(
               itemCount:state.messageList!.length,
               itemBuilder: (BuildContext context, int index) {
@@ -61,10 +63,15 @@ class _NotificationSectionState extends State<NotificationSection> {
                 );
               },
             );
-          }else return Container(child: Center(child: Text("There are currently no announcements",style: TextStyle(fontSize: 22),)),);
+          }else
+            return Container(child: Center(child: Text("There are currently no announcements",style: TextStyle(fontSize: 22),)),);
         }else if (state is LoadingNotification) {
           return CircularLoading();
-        }else return Container(child: Center(child: Text("There are currently no announcements",style: TextStyle(fontSize: 22))),);
+        }else {
+          print("ket thuc ");
+          return Container(child: Center(child: Text("There are currently no announcements",style: TextStyle(fontSize: 22))),);
+        }
+
       },
     );
   }

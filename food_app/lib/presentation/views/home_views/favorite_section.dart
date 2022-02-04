@@ -24,16 +24,19 @@ class _FavoriteSectionState extends State<FavoriteSection> {
       create:(_)=> FavoriteBloc(customerModel: customer)..add(GetFavoriteStores()),
       child: BlocBuilder<FavoriteBloc,FavoriteState>(
                 builder: (context,state) {
-                  return ListView(
-                    padding: EdgeInsets.only(top: 30),
-                    children:
-                    state is FavoriteState ?
-                      state.myStores != null ?
-                  state.myStores!.map((e)=>buildStoreItem(store:e,)).toList()
-                      : state is SuccessState ?
-                  state.myStores!.map((e)=>buildStoreItem(store:e,)).toList()
-                      :[ CircularLoading()] :[ CircularLoading()]
-                  );
+                  if(state.myStores != null)
+                    {
+                      return ListView(
+                          shrinkWrap: true,
+                          padding: EdgeInsets.only(top: 30),
+                          children:
+                          state is FavoriteState ?
+                          state.myStores != null ?
+                          state.myStores!.map((e)=>buildStoreItem(store:e,)).toList()
+                              : state is SuccessState ? state.myStores!.map((e)=>buildStoreItem(store:e,)).toList()
+                              :[ CircularLoading()] :[ CircularLoading()]
+                      ) ;
+                    }else return Container();
                 }
 
         ),

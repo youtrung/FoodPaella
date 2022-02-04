@@ -11,7 +11,7 @@ class RateModel {
     final data=RateModel(
       store_id: jsonMap["store_id"],
       customer_id:jsonMap["customer_id"],
-        rate: jsonMap["rate"],
+        rate: jsonMap["rate"].toDouble(),
     );
     return data;
   }

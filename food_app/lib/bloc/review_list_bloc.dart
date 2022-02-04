@@ -5,6 +5,12 @@ import 'package:food_app/repositories/customer_repository.dart';
 import 'package:food_app/services/api_services.dart';
 
 class ReviewEvent {}
+
+class EventGetListReviewByStoreId extends ReviewEvent {
+  String? storeId;
+  EventGetListReviewByStoreId({this.storeId});
+}
+
 class EventGetReviewUserById extends ReviewEvent {
   String? customerId;
   EventGetReviewUserById({this.customerId});
@@ -23,7 +29,8 @@ class ReviewFailedState extends ReviewState  {
 class ReviewLoadingState extends ReviewState  {}
 class ReviewUsersState extends ReviewState {
   List<CustomerModel>? users=[];
-  ReviewUsersState({this.users});
+  List<RateModel>? reviews=[];
+  ReviewUsersState({this.users,this.reviews});
 }
 class ReviewBloc extends Bloc<ReviewEvent,ReviewState> {
   List<CustomerModel>? users=[];
@@ -50,13 +57,25 @@ class ReviewBloc extends Bloc<ReviewEvent,ReviewState> {
         RateModel rateModel=new RateModel();
         rateModel.store_id=event.storeId;
         rateModel.customer_id=event.customerId;
-        rateModel.rate=event.rate;
+        rateModel.rate=event.rate!;
         await APIWeb().post(CustomerRepository.commentStore(rateModel));
         print("review success");
       }catch (e) {
         print("review failed");
       }
     });
+
+    on<EventGetListReviewByStoreId> ((event,emit) async {
+      try {
+        emit(ReviewLoadingState());
+        await Future.delayed(const Duration(seconds: 2));
+        final data=await APIWeb().get(CustomerRepository.getReviewsStore(event.storeId));
+        emit(ReviewUsersState(reviews: data));
+      }catch (e) {
+        emit(ReviewFailedState(error: e.toString()));
+      }
+    });
+
   }
 
 }

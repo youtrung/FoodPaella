@@ -37,7 +37,7 @@ class _MyAccountSectionState extends State<MyAccountSection> {
               title: Text("Logout",style: TextStyle(fontSize: 20.0,fontWeight: FontWeight.bold),),
               onTap: () {
                 BlocProvider.of<UserBloc>(context).add(LogoutEvent());
-                Navigator.pushReplacementNamed(context, LANDING_ROUTE);
+                Navigator.of(context).pushReplacementNamed(LANDING_ROUTE);
               },
             )
           ]).toList(),

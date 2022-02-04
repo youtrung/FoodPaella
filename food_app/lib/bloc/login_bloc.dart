@@ -80,7 +80,6 @@ class Authentication extends LoginEvent {
 class LoginBloc extends Bloc<LoginEvent,LoginState> {
   CustomerModel? customerModel=CustomerModel.initial();
   LoginBloc() : super(LoginState()) {
-
     on<EmailChanged> (
             (event,emit) => emit(state.copyWith(email: event.email))
     );
@@ -88,14 +87,19 @@ class LoginBloc extends Bloc<LoginEvent,LoginState> {
     on<LoginSubmitted> ((event,emit)  async {
       try {
         emit(state.copyWith(formStatus: FormSubmitting()));
-        await Future.delayed(const Duration(seconds: 1));
+        await Future.delayed(const Duration(seconds: 2));
         final customer =await APIWeb().post(CustomerRepository.getCustomerByEmailAndPassword(event.customerModel));
-        final token =await APIWeb().post(CustomerRepository.saveToken(event.customerModel));
-        SharedPreferences pref=await SharedPreferences.getInstance();
-        await pref.setString("token",token!);
-        await pref.setString("user",jsonEncode(customer));
-        customerModel=customer;
-        emit(state.copyWith(formStatus: SubmissionSuccess(customerModel: customer)));
+        if (customer!=null) {
+          final token =await APIWeb().post(CustomerRepository.saveToken(event.customerModel));
+          SharedPreferences pref=await SharedPreferences.getInstance();
+          await pref.setString("token",token!);
+          await pref.setString("user",jsonEncode(customer));
+          customerModel=customer;
+          emit(state.copyWith(formStatus: SubmissionSuccess(customerModel: customer)));
+        }else {
+          emit(state.copyWith(formStatus: SubmissionFailed("login error")));
+          emit(state.copyWith(formStatus: InitialFormStatus()));
+        }
       }catch(e) {
         emit(state.copyWith(formStatus: SubmissionFailed(e.toString())));
         emit(state.copyWith(formStatus: InitialFormStatus()));
@@ -110,8 +114,14 @@ class LoginBloc extends Bloc<LoginEvent,LoginState> {
         if (result.toString() == "true") {
           CustomerModel user=CustomerModel.fromJSON(jsonDecode(pref.get("user").toString()));
           CustomerModel? customer =await APIWeb().post(CustomerRepository.getCustomerByEmailAndPassword(user));
-          customerModel=customer;
-          emit(state.copyWith(formStatus: SubmissionSuccess(customerModel: customer)));
+          if (customer!=null) {
+            customerModel=customer;
+            emit(state.copyWith(formStatus: SubmissionSuccess(customerModel: customer)));
+          }else {
+            pref.clear();
+            emit(state.copyWith(formStatus: InitialFormStatus()));
+          }
+
         }else
           emit(state.copyWith(formStatus: InitialFormStatus()));
       }catch(e) {

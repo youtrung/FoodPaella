@@ -108,12 +108,14 @@ class _StoreViewState extends State<StoreView> with SingleTickerProviderStateMix
                               if (state.foods != null)
                               {
                                 state.foods!.map((food) {
-                                  if(widget.store!.foods!.contains(food.id)){
-                                    foods.add(food);
-                                    return foods;
+                                  if (!foods.contains(food)){
+                                    if(widget.store!.foods!.contains(food.id)){
+                                      foods.add(food);
+                                      return foods;
+                                    }
                                   }
                                   return foods;
-                                }).toList() ;
+                                }).toList();
                                 return GroupFood(foods: foods,storeId: widget.store!.id,);
                               }
                               return CircularLoading();
@@ -124,9 +126,7 @@ class _StoreViewState extends State<StoreView> with SingleTickerProviderStateMix
                           }
                       ),
                       BlocProvider<ReviewBloc>(
-                          create: (_) {
-                            return ReviewBloc();
-                          },
+                          create: (_)=>ReviewBloc()..add(EventGetListReviewByStoreId(storeId:widget.store!.id)),
                           child: ReviewSection(store: widget.store,)
                       ),
                       InfoSection(store: widget.store,),

@@ -22,8 +22,9 @@ class _RegisterViewState extends State<RegisterView> {
   final TextEditingController _nameController=TextEditingController();
   final TextEditingController _emailController =TextEditingController();
   final TextEditingController _passwordController =TextEditingController();
-  final TextEditingController _repasswordController =TextEditingController();
+  final TextEditingController _phoneController =TextEditingController();
   final _formkey = GlobalKey<FormState>();
+  SnackBar mySnackBar=SnackBar(content: Text("This email already exists"));
 
   @override
   Widget build(BuildContext context) {
@@ -60,16 +61,20 @@ class _RegisterViewState extends State<RegisterView> {
               listener: (context,state) {
                 final formStatus=state.formStatus;
                 if (formStatus is SubmissionSuccess) {
-                  Navigator.of(context).pushReplacementNamed(HOME_ROUTE,arguments: formStatus.customerModel);
+                  Navigator.of(context).pushReplacementNamed(LANDING_ROUTE);
                 }else if (formStatus is SubmissionFailed) {
-                  print(formStatus.exception.toString());
+                  print("error:"+formStatus.exception.toString());
+                  ScaffoldMessenger.of(context).showSnackBar(mySnackBar);
                 }
               },
               child: Form(
                 key: _formkey,
                 child: SingleChildScrollView(
                   child: BlocBuilder<RegisterBloc,RegisterState>(
-                    builder: (context,state)=> state.formStatus is FormSubmitting ? CircularLoading():
+                    builder: (context,state)=>
+                    state.formStatus is FormSubmitting ?
+                    CircularLoading():
+                    state.formStatus is SubmissionFailed ?
                     Column(
                       children: [
                         SizedBox(
@@ -146,21 +151,20 @@ class _RegisterViewState extends State<RegisterView> {
                             ),
                             SizedBox(height: 20,),
                             CustomTestInput(
+                              icons: FontAwesomeIcons.phone,
+                              hintText: 'Phone number',
+                              textEditingController: _phoneController,
+                              validator: (value)=> value!.length !=10 ? "phone number is invalid":null,
+                              textInputAction: TextInputAction.next,
+                            ),
+                            SizedBox(height: 20,),
+                            CustomTestInput(
                               icons: FontAwesomeIcons.lock,
                               hintText: 'Password',
                               onChanged: (value) => context.read<RegisterBloc>().add(
                                 PasswordChanged(password: value),
                               ),
                               textEditingController: _passwordController,
-                              obscureText: true,
-                              textInputAction: TextInputAction.next,
-                            ),
-                            SizedBox(height: 20,),
-                            CustomTestInput(
-                              icons: FontAwesomeIcons.lock,
-                              hintText: 'Confirm Password',
-                              textEditingController: _repasswordController,
-                              validator: (value)=> value==_passwordController.text ? null:"password is not match",
                               obscureText: true,
                               textInputAction: TextInputAction.done,
                             ),
@@ -177,7 +181,8 @@ class _RegisterViewState extends State<RegisterView> {
                                         customerModel:customerModel.copyWith(
                                             name: _nameController.text,
                                             email:_emailController.text,
-                                            password:_passwordController.text
+                                            password:_passwordController.text,
+                                            phone: _phoneController.text
                                         )
                                     )
                                     );
@@ -217,7 +222,154 @@ class _RegisterViewState extends State<RegisterView> {
                           ],
                         )
                       ],
-                    ),
+                    ):Column(
+                      children: [
+                        SizedBox(
+                          height: size.width * 0.1,
+                        ),
+                        Stack(
+                          children: [
+                            Center(
+                              child: ClipOval(
+                                child: BackdropFilter(
+                                  filter: ImageFilter.blur(sigmaX: 3, sigmaY: 3),
+                                  child: CircleAvatar(
+                                    radius: size.width * 0.14,
+                                    backgroundColor: Colors.grey[400]!.withOpacity(
+                                      0.4,
+                                    ),
+                                    child: Icon(
+                                      FontAwesomeIcons.user,
+                                      size: size.width * 0.1,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            Positioned(
+                              top: size.height * 0.08,
+                              left: size.width * 0.56,
+                              child: Container(
+                                height: size.width * 0.1,
+                                width: size.width * 0.1,
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  border: Border.all(color: Colors.white, width: 2),
+                                ),
+                                child: Icon(
+                                  FontAwesomeIcons.arrowUp,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            )
+                          ],
+                        ),
+                        SizedBox(
+                          height: size.width * 0.1,
+                        ),
+                        Column(
+                          children: [
+                            CustomTestInput(
+                              icons: FontAwesomeIcons.user,
+                              textEditingController: _nameController,
+                              validator: (value)  {
+                                if (value !=null) {
+                                  return value.length >0 ? null:"user is required";
+                                }else {
+                                  value="";
+                                  return value.length >0 ? null:"user is required";
+                                }
+                              },
+                              hintText: 'User',
+                              textInputType: TextInputType.name,
+                              textInputAction: TextInputAction.next,
+                            ),
+                            SizedBox(height: 20,),
+                            CustomTestInput(
+                              icons: FontAwesomeIcons.envelope,
+                              hintText:'Email',
+                              onChanged: (value) => context.read<RegisterBloc>().add(
+                                EmailChanged(email: value),
+                              ),
+                              validator: (value)=>state.isValidEmail ? null:"email is not valid",
+                              textEditingController: _emailController,
+                              textInputType: TextInputType.emailAddress,
+                              textInputAction: TextInputAction.next,
+                            ),
+                            SizedBox(height: 20,),
+                            CustomTestInput(
+                              icons: FontAwesomeIcons.phone,
+                              hintText: 'Phone number',
+                              textEditingController: _phoneController,
+                              validator: (value)=> value!.length !=10 ? "phone number is invalid":null,
+                              textInputAction: TextInputAction.next,
+                            ),
+                            SizedBox(height: 20,),
+                            CustomTestInput(
+                              icons: FontAwesomeIcons.lock,
+                              hintText: 'Password',
+                              onChanged: (value) => context.read<RegisterBloc>().add(
+                                PasswordChanged(password: value),
+                              ),
+                              textEditingController: _passwordController,
+                              obscureText: true,
+                              textInputAction: TextInputAction.done,
+                            ),
+                            SizedBox(
+                              height: 25,
+                            ),
+                            SizedBox(
+                              height: 50,
+                              width: Helper.getScreenWidth(context)*0.9,
+                              child: ElevatedButton(
+                                onPressed: () {
+                                  if(_formkey.currentState!.validate()) {
+                                    context.read<RegisterBloc>().add(RegisterSubmitted(
+                                        customerModel:customerModel.copyWith(
+                                            name: _nameController.text,
+                                            email:_emailController.text,
+                                            password:_passwordController.text,
+                                            phone: _phoneController.text
+                                        )
+                                    )
+                                    );
+                                  }
+                                },
+                                child: Text("Register"),
+                                style:
+                                ButtonStyle(
+                                    backgroundColor: MaterialStateProperty.all(Colors.indigo),
+                                    shape: MaterialStateProperty.all(
+                                      StadiumBorder(),
+                                    ),
+                                    elevation: MaterialStateProperty.all(0)
+                                ),
+                              ),
+                            ),
+                            SizedBox(
+                              height: 30,
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                GestureDetector(
+                                  onTap: () {
+                                    Navigator.pushNamed(context,LOGIN_ROUTE);
+                                  },
+                                  child: Text(
+                                    'Already have an account?Login',
+                                    style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            SizedBox(
+                              height: 20,
+                            ),
+                          ],
+                        )
+                      ],
+                    )
                   ),
                 ),
               ),

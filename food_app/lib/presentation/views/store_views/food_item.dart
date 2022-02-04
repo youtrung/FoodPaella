@@ -17,7 +17,6 @@ class FoodItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final formatCurrency = new NumberFormat();
-
     return BlocProvider(
       create: (_)=>QuantityBloc(food: food),
       child: InkWell(
@@ -67,7 +66,6 @@ class FoodItem extends StatelessWidget {
                     ),
                     SizedBox(width: 10,),
                     FoodWidgets(food: food,storeId: storeId,),
-
                   ]
               ),
             ),
